@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Market Call — Player</title>
+<script src="/socket.io/socket.io.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c0f;
+    --surface: #111318;
+    --border: #1e2330;
+    --green: #00e896;
+    --red: #ff3b5c;
+    --gold: #f5c842;
+    --blue: #3b82f6;
+    --text: #e8eaf0;
+    --muted: #5a6070;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; overscroll-behavior: none; }
+
+  .screen { display: none; padding: 24px 20px; min-height: 100vh; }
+  .screen.active { display: block; }
+
+  /* Join screen */
+  .join-logo { font-family: 'Bebas Neue', sans-serif; font-size: 52px; color: var(--green); letter-spacing: 4px; margin-bottom: 4px; }
+  .join-sub { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 2px; margin-bottom: 40px; }
+  .input-group { margin-bottom: 16px; }
+  .input-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 2px; margin-bottom: 8px; display: block; }
+  input[type=text] {
+    width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 16px; padding: 14px 16px; border-radius: 8px;
+    outline: none; transition: border-color 0.2s;
+  }
+  input[type=text]:focus { border-color: var(--green); }
+  .btn-full { width: 100%; background: var(--green); color: #000; font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 600; letter-spacing: 2px; padding: 16px; border: none; border-radius: 8px; cursor: pointer; margin-top: 8px; transition: all 0.2s; }
+  .btn-full:active { transform: scale(0.98); }
+  .btn-full:disabled { opacity: 0.3; }
+
+  /* Status */
+  .status-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .player-name { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
+  .capital-display { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: var(--green); }
+  .capital-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 1px; }
+
+  /* Wait */
+  .wait-box { text-align: center; padding: 40px 20px; }
+  .wait-title { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--muted); margin-bottom: 12px; }
+  .wait-dot { display: inline-block; width: 8px; height: 8px; background: var(--green); border-radius: 50%; margin: 0 3px; animation: bounce 1.2s ease-in-out infinite; }
+  .wait-dot:nth-child(2) { animation-delay: 0.2s; }
+  .wait-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+  /* Voting */
+  .round-title { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--text); margin-bottom: 4px; }
+  .timer-bar-wrap { background: var(--surface); border-radius: 4px; height: 6px; margin: 12px 0 20px; overflow: hidden; }
+  .timer-bar { height: 100%; background: var(--green); border-radius: 4px; transition: width 1s linear, background 0.3s; }
+  .timer-bar.urgent { background: var(--red); }
+
+  .market-section { margin-bottom: 20px; }
+  .market-label { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); letter-spacing: 1px; margin-bottom: 8px; }
+  .direction-btns { display: flex; gap: 8px; margin-bottom: 10px; }
+  .dir-btn {
+    flex: 1; padding: 12px 8px; border-radius: 8px; font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500;
+    border: 2px solid var(--border); background: var(--surface); color: var(--muted); cursor: pointer; transition: all 0.15s; text-align: center;
+  }
+  .dir-btn.long-btn.selected { background: rgba(0,232,150,0.15); border-color: var(--green); color: var(--green); }
+  .dir-btn.short-btn.selected { background: rgba(255,59,92,0.15); border-color: var(--red); color: var(--red); }
+  .dir-btn.skip-btn.selected { background: rgba(90,96,112,0.15); border-color: var(--muted); color: var(--muted); }
+
+  .amount-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .amt-btn {
+    flex: 1; min-width: 60px; padding: 8px 4px; border-radius: 6px; font-family: 'DM Mono', monospace; font-size: 12px;
+    border: 1px solid var(--border); background: var(--surface); color: var(--muted); cursor: pointer; transition: all 0.15s; text-align: center;
+  }
+  .amt-btn.selected { border-color: var(--gold); color: var(--gold); background: rgba(245,200,66,0.1); }
+
+  .submit-section { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+
+  /* Result */
+  .result-box { text-align: center; padding: 32px 20px; }
+  .result-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 2px; margin-bottom: 8px; }
+  .result-pnl { font-family: 'Bebas Neue', sans-serif; font-size: 72px; }
+  .result-pnl.up { color: var(--green); }
+  .result-pnl.down { color: var(--red); }
+  .result-total { font-family: 'DM Mono', monospace; font-size: 16px; color: var(--text); margin-top: 8px; }
+
+  /* End */
+  .end-box { text-align: center; padding: 40px 20px; }
+  .end-emoji { font-size: 64px; margin-bottom: 16px; }
+  .end-title { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--gold); margin-bottom: 8px; }
+
+  .tag { display: inline-block; font-family: 'DM Mono', monospace; font-size: 10px; padding: 2px 8px; border-radius: 3px; letter-spacing: 1px; }
+  .tag-live { background: rgba(255,59,92,0.2); color: var(--red); border: 1px solid var(--red); }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+</style>
+</head>
+<body>
+
+<!-- JOIN SCREEN -->
+<div class="screen active" id="screenJoin">
+  <div class="join-logo">Market<br>Call</div>
+  <div class="join-sub">LIVE TRADING GAME</div>
+  <div class="input-group">
+    <label class="input-label">YOUR NAME</label>
+    <input type="text" id="playerName" placeholder="e.g. Warren Buffett" maxlength="20" />
+  </div>
+  <button class="btn-full" id="joinBtn" onclick="joinGame()">JOIN GAME</button>
+  <p style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:20px;text-align:center">You'll start with $10,000 to trade across 4 rounds</p>
+</div>
+
+<!-- GAME SCREEN -->
+<div class="screen" id="screenGame">
+  <div class="status-top">
+    <div>
+      <div class="player-name" id="displayName">—</div>
+      <div class="capital-label">PORTFOLIO VALUE</div>
+    </div>
+    <div style="text-align:right">
+      <div class="capital-display" id="displayCapital">$10,000</div>
+    </div>
+  </div>
+  <hr class="divider">
+  <div id="gameContent"></div>
+</div>
+
+<script>
+const socket = io();
+let myName = '';
+let myCapital = 10000;
+let votes = {};
+let currentMarkets = [];
+let timerInterval = null;
+
+// ── Rendering helpers ──────────────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function joinGame() {
+  const name = document.getElementById('playerName').value.trim();
+  if (!name) return;
+  myName = name;
+  document.getElementById('joinBtn').disabled = true;
+  socket.emit('join', { name });
+}
+
+socket.on('joined', ({ capital }) => {
+  myCapital = capital;
+  document.getElementById('displayName').textContent = myName;
+  document.getElementById('displayCapital').textContent = '$' + capital.toLocaleString();
+  showScreen('screenGame');
+});
+
+socket.on('votesReceived', () => {
+  const btn = document.getElementById('submitBtn');
+  if (btn) { btn.textContent = '✓ VOTES SUBMITTED'; btn.disabled = true; btn.style.background = '#1e2330'; btn.style.color = 'var(--green)'; }
+});
+
+socket.on('roundResult', ({ pnl, totalCapital }) => {
+  myCapital = totalCapital;
+  document.getElementById('displayCapital').textContent = '$' + totalCapital.toLocaleString();
+  const sign = pnl >= 0 ? '+' : '';
+  const cls = pnl >= 0 ? 'up' : 'down';
+  const emoji = pnl >= 0 ? '📈' : '📉';
+  document.getElementById('gameContent').innerHTML = `
+    <div class="result-box">
+      <div style="font-size:48px">${emoji}</div>
+      <div class="result-label">ROUND P&L</div>
+      <div class="result-pnl ${cls}">${sign}$${Math.abs(pnl).toFixed(0)}</div>
+      <div class="result-total">Portfolio: $${totalCapital.toLocaleString()}</div>
+      <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);margin-top:24px">Waiting for host to continue...</p>
+    </div>`;
+});
+
+socket.on('state', state => {
+  renderPhase(state);
+});
+
+function renderPhase(state) {
+  clearInterval(timerInterval);
+  const el = document.getElementById('gameContent');
+
+  if (state.phase === 'lobby') {
+    el.innerHTML = `<div class="wait-box"><div class="wait-title">WAITING FOR HOST</div><span class="wait-dot"></span><span class="wait-dot"></span><span class="wait-dot"></span></div>`;
+  } else if (state.phase === 'news' && state.round) {
+    currentMarkets = state.round.markets;
+    el.innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <span class="tag tag-live">LIVE</span>
+        <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">ROUND ${state.round.id} / 4</span>
+      </div>
+      <div class="round-title">${state.round.title}</div>
+      <p style="font-size:14px;line-height:1.6;color:#b0b8c8;margin-top:12px">${state.round.news}</p>
+      <div style="margin-top:20px;font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)">Host will open voting soon...</div>`;
+  } else if (state.phase === 'voting' && state.round) {
+    votes = {};
+    currentMarkets = state.round.markets;
+    renderVoting(state);
+  } else if (state.phase === 'reveal') {
+    // roundResult event handles individual reveal, show generic waiting if no result yet
+    if (!document.querySelector('.result-box')) {
+      el.innerHTML = `<div class="wait-box"><div class="wait-title">PRICES REVEALED</div><p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);margin-top:12px">Watch the main screen for analysis!</p></div>`;
+    }
+  } else if (state.phase === 'end') {
+    el.innerHTML = `
+      <div class="end-box">
+        <div class="end-emoji">🏆</div>
+        <div class="end-title">GAME OVER</div>
+        <div style="font-family:'DM Mono',monospace;font-size:14px;color:var(--muted)">Final Portfolio</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--green);margin-top:4px">$${myCapital.toLocaleString()}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:13px;color:${myCapital >= 10000 ? 'var(--green)' : 'var(--red)'};margin-top:8px">
+          ${myCapital >= 10000 ? '▲' : '▼'} $${Math.abs(myCapital - 10000).toLocaleString()} vs starting capital
+        </div>
+      </div>`;
+  }
+}
+
+function renderVoting(state) {
+  const AMOUNTS = [500, 1000, 2000, 5000];
+  const el = document.getElementById('gameContent');
+  const bar = Math.round(((state.timerEnd - Date.now()) / 60000) * 100);
+
+  el.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <div class="round-title" style="font-size:18px">${state.round.title}</div>
+      <div id="timerText" style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--green)">60</div>
+    </div>
+    <div class="timer-bar-wrap"><div class="timer-bar" id="timerBar" style="width:${bar}%"></div></div>
+    ${currentMarkets.map(m => `
+      <div class="market-section">
+        <div class="market-label">${m}</div>
+        <div class="direction-btns">
+          <div class="dir-btn long-btn" onclick="setDir('${m}','long',this)">📈 LONG</div>
+          <div class="dir-btn short-btn" onclick="setDir('${m}','short',this)">📉 SHORT</div>
+          <div class="dir-btn skip-btn selected" onclick="setDir('${m}','skip',this)">— SKIP</div>
+        </div>
+        <div class="amount-row" id="amts-${m.replace(/[^a-z0-9]/gi,'_')}">
+          ${AMOUNTS.map(a => `<div class="amt-btn" onclick="setAmt('${m}',${a},this)">$${a.toLocaleString()}</div>`).join('')}
+        </div>
+      </div>`).join('<hr class="divider">')}
+    <div class="submit-section">
+      <button class="btn-full" id="submitBtn" onclick="submitVotes()">SUBMIT TRADES</button>
+    </div>`;
+
+  // Init votes with skip
+  currentMarkets.forEach(m => { votes[m] = { direction: 'skip', amount: 0 }; });
+
+  startPlayerTimer(state.timerEnd);
+}
+
+function setDir(market, dir, el) {
+  const section = el.closest('.market-section');
+  section.querySelectorAll('.dir-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  if (!votes[market]) votes[market] = {};
+  votes[market].direction = dir;
+  if (dir === 'skip') votes[market].amount = 0;
+}
+
+function setAmt(market, amount, el) {
+  const key = market.replace(/[^a-z0-9]/gi,'_');
+  document.querySelectorAll(`#amts-${key} .amt-btn`).forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  if (!votes[market]) votes[market] = {};
+  votes[market].amount = amount;
+}
+
+function submitVotes() {
+  const out = {};
+  for (const [m, v] of Object.entries(votes)) {
+    if (v.direction !== 'skip' && v.amount > 0) out[m] = v;
+  }
+  socket.emit('submitVotes', { votes: out });
+}
+
+function startPlayerTimer(endTime) {
+  timerInterval = setInterval(() => {
+    const remaining = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
+    const pct = Math.round((remaining / 60) * 100);
+    const timerEl = document.getElementById('timerText');
+    const barEl = document.getElementById('timerBar');
+    if (timerEl) { timerEl.textContent = remaining; timerEl.style.color = remaining <= 10 ? 'var(--red)' : 'var(--green)'; }
+    if (barEl) { barEl.style.width = pct + '%'; barEl.classList.toggle('urgent', remaining <= 10); }
+    if (remaining <= 0) clearInterval(timerInterval);
+  }, 200);
+}
+
+// Enter to join
+document.getElementById('playerName').addEventListener('keydown', e => { if (e.key === 'Enter') joinGame(); });
+</script>
+</body>
+</html>

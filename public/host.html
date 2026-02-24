@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Market Call — Host</title>
+<script src="/socket.io/socket.io.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c0f;
+    --surface: #111318;
+    --border: #1e2330;
+    --green: #00e896;
+    --red: #ff3b5c;
+    --gold: #f5c842;
+    --blue: #3b82f6;
+    --text: #e8eaf0;
+    --muted: #5a6070;
+    --accent: #00e896;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; overflow: hidden; }
+
+  /* Ticker tape */
+  .ticker {
+    background: var(--green); color: #000; font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+    padding: 4px 0; white-space: nowrap; overflow: hidden;
+  }
+  .ticker-inner { display: inline-block; animation: ticker 30s linear infinite; }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* Layout */
+  .shell { display: grid; grid-template-rows: auto 1fr auto; height: calc(100vh - 24px); }
+  header { display: flex; align-items: center; justify-content: space-between; padding: 16px 28px; border-bottom: 1px solid var(--border); }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 3px; color: var(--green); }
+  .round-badge { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); border: 1px solid var(--border); padding: 4px 12px; border-radius: 4px; }
+  .players-badge { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--green); }
+
+  main { display: grid; grid-template-columns: 1fr 320px; gap: 0; overflow: hidden; }
+
+  /* Content area */
+  .content { padding: 28px; overflow-y: auto; border-right: 1px solid var(--border); }
+  
+  /* Phase: lobby */
+  .lobby-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 32px; }
+  .lobby-title { font-family: 'Bebas Neue', sans-serif; font-size: 96px; letter-spacing: 8px; color: var(--green); line-height: 1; text-align: center; }
+  .lobby-sub { font-family: 'DM Mono', monospace; font-size: 14px; color: var(--muted); text-align: center; letter-spacing: 2px; }
+  .join-url { font-family: 'DM Mono', monospace; font-size: 20px; color: var(--gold); border: 1px solid var(--gold); padding: 12px 24px; border-radius: 6px; }
+  .pulse { animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+  /* Phase: news */
+  .news-header { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--text); margin-bottom: 6px; }
+  .news-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--gold); letter-spacing: 3px; margin-bottom: 20px; }
+  .news-body { font-size: 18px; line-height: 1.7; color: #b0b8c8; background: var(--surface); border-left: 3px solid var(--gold); padding: 20px 24px; border-radius: 0 8px 8px 0; margin-bottom: 28px; }
+  
+  .markets-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .market-chip { font-family: 'DM Mono', monospace; font-size: 13px; background: var(--surface); border: 1px solid var(--border); padding: 8px 16px; border-radius: 4px; color: var(--muted); }
+
+  /* Phase: voting */
+  .vote-timer { font-family: 'Bebas Neue', sans-serif; font-size: 72px; color: var(--green); text-align: center; margin: 16px 0; }
+  .vote-timer.urgent { color: var(--red); animation: blink 0.5s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0.3; } }
+  .vote-count { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--muted); text-align: center; }
+
+  /* Phase: reveal */
+  .reveal-section { margin-top: 24px; }
+  .reveal-label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 3px; color: var(--accent); margin-bottom: 16px; }
+  .market-results { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .market-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .market-name { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .market-move { font-family: 'Bebas Neue', sans-serif; font-size: 36px; }
+  .market-card.positive { border-color: var(--green); }
+  .market-card.positive .market-move { color: var(--green); }
+  .market-card.negative { border-color: var(--red); }
+  .market-card.negative .market-move { color: var(--red); }
+  .analysis-box { background: var(--surface); border: 1px solid var(--blue); border-radius: 8px; padding: 20px; margin-top: 16px; font-size: 15px; line-height: 1.7; color: #b0b8c8; }
+  .analysis-box strong { color: var(--blue); font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 2px; display: block; margin-bottom: 10px; }
+
+  /* Leaderboard panel */
+  .sidebar { padding: 20px; overflow-y: auto; }
+  .sidebar-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--muted); margin-bottom: 16px; }
+  .lb-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 6px; margin-bottom: 6px; background: var(--surface); border: 1px solid var(--border); transition: all 0.4s; }
+  .lb-row:first-child { border-color: var(--gold); }
+  .lb-rank { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--muted); width: 24px; }
+  .lb-row:first-child .lb-rank { color: var(--gold); }
+  .lb-name { font-size: 13px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lb-capital { font-family: 'DM Mono', monospace; font-size: 13px; }
+  .lb-capital.up { color: var(--green); }
+  .lb-capital.down { color: var(--red); }
+
+  /* Controls */
+  footer { padding: 16px 28px; border-top: 1px solid var(--border); display: flex; gap: 12px; align-items: center; }
+  .btn { font-family: 'DM Mono', monospace; font-size: 13px; letter-spacing: 1px; padding: 10px 24px; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+  .btn-primary { background: var(--green); color: #000; font-weight: 600; }
+  .btn-primary:hover { background: #00ffa8; transform: translateY(-1px); }
+  .btn-danger { background: transparent; color: var(--red); border: 1px solid var(--red); }
+  .btn-danger:hover { background: var(--red); color: #fff; }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  .btn-ghost:hover { color: var(--text); border-color: var(--text); }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+  .phase-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 2px; margin-left: auto; }
+
+  .hidden { display: none !important; }
+  
+  /* End screen */
+  .end-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 16px; }
+  .end-title { font-family: 'Bebas Neue', sans-serif; font-size: 72px; color: var(--gold); letter-spacing: 6px; }
+  .end-sub { font-family: 'DM Mono', monospace; font-size: 14px; color: var(--muted); }
+  .winner-name { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--green); }
+
+  .scanline { position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px); z-index: 9999; }
+</style>
+</head>
+<body>
+<div class="scanline"></div>
+<div class="ticker">
+  <span class="ticker-inner">
+    MARKET CALL LIVE &nbsp;◆&nbsp; ROUND IN PROGRESS &nbsp;◆&nbsp; BUY THE DIP OR SELL THE RALLY? &nbsp;◆&nbsp; FUNDAMENTALS MATTER &nbsp;◆&nbsp; LONG OR SHORT? &nbsp;◆&nbsp; 
+    MARKET CALL LIVE &nbsp;◆&nbsp; ROUND IN PROGRESS &nbsp;◆&nbsp; BUY THE DIP OR SELL THE RALLY? &nbsp;◆&nbsp; FUNDAMENTALS MATTER &nbsp;◆&nbsp; LONG OR SHORT? &nbsp;◆&nbsp;
+  </span>
+</div>
+
+<div class="shell">
+  <header>
+    <div class="logo">Market Call</div>
+    <div class="players-badge" id="playerCount">0 PLAYERS CONNECTED</div>
+    <div class="round-badge" id="roundBadge">LOBBY</div>
+  </header>
+
+  <main>
+    <div class="content" id="mainContent">
+      <!-- Injected by JS -->
+    </div>
+    <div class="sidebar">
+      <div class="sidebar-title">Leaderboard</div>
+      <div id="leaderboard"></div>
+    </div>
+  </main>
+
+  <footer>
+    <button class="btn btn-primary hidden" id="btnStartRound" onclick="hostAction('hostStartRound')">START GAME</button>
+    <button class="btn btn-primary hidden" id="btnOpenVoting" onclick="hostAction('hostOpenVoting')">OPEN VOTING (60s)</button>
+    <button class="btn btn-primary hidden" id="btnReveal" onclick="hostAction('hostReveal')">REVEAL PRICES</button>
+    <button class="btn btn-primary hidden" id="btnNext" onclick="hostAction('hostNextRound')">NEXT ROUND →</button>
+    <button class="btn btn-ghost hidden" id="btnReset" onclick="hostAction('hostReset')">RESET GAME</button>
+    <span class="phase-label" id="phaseLabel">HOST PANEL</span>
+  </footer>
+</div>
+
+<script>
+const socket = io();
+socket.emit('hostJoin');
+
+let timerInterval = null;
+
+function hostAction(action) { socket.emit(action); }
+
+socket.on('voteCount', count => {
+  const el = document.getElementById('voteCountDisplay');
+  if (el) el.textContent = count + ' votes received';
+});
+
+socket.on('state', state => {
+  updateHeader(state);
+  updateContent(state);
+  updateLeaderboard(state.leaderboard);
+  updateButtons(state);
+});
+
+function updateHeader(state) {
+  document.getElementById('playerCount').textContent = state.playerCount + ' PLAYERS CONNECTED';
+  document.getElementById('roundBadge').textContent = state.currentRound >= 0 && state.round ? `ROUND ${state.round.id} / 4` : 'LOBBY';
+  document.getElementById('phaseLabel').textContent = state.phase.toUpperCase();
+}
+
+function updateContent(state) {
+  const el = document.getElementById('mainContent');
+  clearInterval(timerInterval);
+
+  if (state.phase === 'lobby') {
+    el.innerHTML = `
+      <div class="lobby-screen">
+        <div class="lobby-title">Market<br>Call</div>
+        <div class="lobby-sub">JOIN THE GAME ON YOUR PHONE</div>
+        <div class="join-url pulse">📱 ${location.host}/player</div>
+        <div class="lobby-sub" style="color:#3b82f6">Waiting for host to start...</div>
+      </div>`;
+  } else if (state.phase === 'news' && state.round) {
+    el.innerHTML = `
+      <div class="news-label">📰 BREAKING NEWS — ROUND ${state.round.id}</div>
+      <div class="news-header">${state.round.title}</div>
+      <div class="news-body">${state.round.news}</div>
+      <div class="news-label" style="margin-top:24px">MARKETS IN PLAY</div>
+      <div class="markets-row">${state.round.markets.map(m => `<div class="market-chip">${m}</div>`).join('')}</div>`;
+  } else if (state.phase === 'voting' && state.round) {
+    el.innerHTML = `
+      <div class="news-label">⏱ VOTING OPEN — PLACE YOUR TRADES</div>
+      <div class="news-header">${state.round.title}</div>
+      <div class="news-body" style="font-size:15px">${state.round.news}</div>
+      <div class="vote-timer" id="timerDisplay">60</div>
+      <div class="vote-count" id="voteCountDisplay">0 votes received</div>`;
+    startTimer(state.timerEnd);
+  } else if (state.phase === 'reveal' && state.round) {
+    const mKeys = Object.keys(state.round.movements);
+    el.innerHTML = `
+      <div class="news-label">📊 PRICE REVEAL — ROUND ${state.round.id}</div>
+      <div class="news-header">${state.round.title}</div>
+      <div class="market-results">
+        ${mKeys.map(m => {
+          const mv = state.round.movements[m];
+          const cls = mv >= 0 ? 'positive' : 'negative';
+          const sign = mv >= 0 ? '+' : '';
+          return `<div class="market-card ${cls}"><div class="market-name">${m}</div><div class="market-move">${sign}${mv}%</div></div>`;
+        }).join('')}
+      </div>
+      <div class="reveal-section">
+        <div class="analysis-box"><strong>FUNDAMENTAL ANALYSIS</strong>${state.round.analysis}</div>
+      </div>`;
+  } else if (state.phase === 'end') {
+    const winner = state.leaderboard[0];
+    el.innerHTML = `
+      <div class="end-screen">
+        <div class="end-title">🏆 Game Over</div>
+        <div class="end-sub">CHAMPION</div>
+        <div class="winner-name">${winner ? winner.name : '—'}</div>
+        <div style="font-family:'DM Mono',monospace;color:var(--green);font-size:24px">${winner ? '$' + winner.capital.toLocaleString() : ''}</div>
+      </div>`;
+  }
+}
+
+function startTimer(endTime) {
+  if (!endTime) return;
+  timerInterval = setInterval(() => {
+    const remaining = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
+    const el = document.getElementById('timerDisplay');
+    if (el) {
+      el.textContent = remaining;
+      el.classList.toggle('urgent', remaining <= 10);
+    }
+    if (remaining <= 0) clearInterval(timerInterval);
+  }, 200);
+}
+
+function updateLeaderboard(lb) {
+  const el = document.getElementById('leaderboard');
+  if (!lb || lb.length === 0) { el.innerHTML = '<div style="color:var(--muted);font-size:13px;font-family:DM Mono">No players yet</div>'; return; }
+  el.innerHTML = lb.map((p, i) => {
+    const diff = p.capital - 10000;
+    const cls = diff >= 0 ? 'up' : 'down';
+    const sign = diff >= 0 ? '+' : '';
+    return `<div class="lb-row">
+      <span class="lb-rank">${i + 1}</span>
+      <span class="lb-name">${p.name}</span>
+      <span class="lb-capital ${cls}">$${p.capital.toLocaleString()}</span>
+    </div>`;
+  }).join('');
+}
+
+function updateButtons(state) {
+  const show = id => document.getElementById(id).classList.remove('hidden');
+  const hide = id => document.getElementById(id).classList.add('hidden');
+  ['btnStartRound','btnOpenVoting','btnReveal','btnNext','btnReset'].forEach(hide);
+
+  if (state.phase === 'lobby') { show('btnStartRound'); }
+  else if (state.phase === 'news') { show('btnOpenVoting'); show('btnReset'); }
+  else if (state.phase === 'voting') { show('btnReveal'); show('btnReset'); }
+  else if (state.phase === 'reveal') { show('btnNext'); show('btnReset'); }
+  else if (state.phase === 'end') { show('btnReset'); }
+}
+</script>
+</body>
+</html>
