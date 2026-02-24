@@ -114,6 +114,8 @@ io.on('connection', (socket) => {
     socket.join('host');
     socket.emit('hostJoined');
     broadcastState();
+    // Also send state directly to this socket in case broadcast missed it
+    setTimeout(() => broadcastState(), 200);
   });
 
   socket.on('hostStartRound', () => {
@@ -174,3 +176,4 @@ io.on('connection', (socket) => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => console.log(`Market Call running on http://localhost:${PORT}`));
+
