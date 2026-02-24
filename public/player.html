@@ -134,6 +134,7 @@ let myCapital = 10000;
 let votes = {};
 let currentMarkets = [];
 let timerInterval = null;
+let alreadySubmitted = false;
 
 // ── Rendering helpers ──────────────────────────────────────────────────────
 function showScreen(id) {
@@ -158,7 +159,12 @@ socket.on('joined', ({ capital }) => {
 
 socket.on('votesReceived', () => {
   const btn = document.getElementById('submitBtn');
-  if (btn) { btn.textContent = '✓ VOTES SUBMITTED'; btn.disabled = true; btn.style.background = '#1e2330'; btn.style.color = 'var(--green)'; }
+  if (btn) { 
+    btn.textContent = '✓ TRADES SUBMITTED'; 
+    btn.disabled = true; 
+    btn.style.background = '#1e2330'; 
+    btn.style.color = 'var(--green)'; 
+  }
 });
 
 socket.on('roundResult', ({ pnl, totalCapital }) => {
@@ -200,6 +206,8 @@ function renderPhase(state) {
   } else if (state.phase === 'voting' && state.round) {
     votes = {};
     currentMarkets = state.round.markets;
+    // Reset submitted state
+    alreadySubmitted = false;
     renderVoting(state);
   } else if (state.phase === 'reveal') {
     // roundResult event handles individual reveal, show generic waiting if no result yet
@@ -271,11 +279,13 @@ function setAmt(market, amount, el) {
 }
 
 function submitVotes() {
+  if (alreadySubmitted) return;
   const out = {};
   for (const [m, v] of Object.entries(votes)) {
     if (v.direction !== 'skip' && v.amount > 0) out[m] = v;
   }
   socket.emit('submitVotes', { votes: out });
+  alreadySubmitted = true;
 }
 
 function startPlayerTimer(endTime) {
