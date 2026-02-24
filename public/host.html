@@ -151,7 +151,9 @@
 
 <script>
 const socket = io();
-socket.emit('hostJoin');
+socket.on('connect', () => {
+  socket.emit('hostJoin');
+});
 
 let timerInterval = null;
 
