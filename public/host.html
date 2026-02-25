@@ -6,126 +6,141 @@
 <title>Market Call — Host</title>
 <script src="/socket.io/socket.io.js"></script>
 <script>if (typeof io === 'undefined') { document.write('<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"><\/script>'); }</script>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Noto+Sans+HK:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0c0f;
-    --surface: #111318;
-    --border: #1e2330;
-    --green: #00e896;
-    --red: #ff3b5c;
-    --gold: #f5c842;
-    --blue: #3b82f6;
-    --text: #e8eaf0;
-    --muted: #5a6070;
-    --accent: #00e896;
+    --bg: #06080f;
+    --surface: #0d1120;
+    --border: #1a2240;
+    --jade: #00c896;
+    --neon-red: #ff2d55;
+    --gold: #f0a500;
+    --harbour: #4d9fff;
+    --text: #dde4f0;
+    --muted: #4a5570;
+    --accent: #00c896;
+    --purple: #9b5de5;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; overflow: hidden; }
+  body {
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse 80% 40% at 50% 100%, rgba(77,159,255,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 30% at 20% 80%, rgba(255,45,85,0.05) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 80% 80%, rgba(0,200,150,0.05) 0%, transparent 60%);
+    color: var(--text); font-family: 'Noto Sans HK', sans-serif; min-height: 100vh; overflow: hidden;
+  }
 
-  /* Ticker tape */
+  /* Ticker tape — red neon like HK signage */
   .ticker {
-    background: var(--green); color: #000; font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
-    padding: 4px 0; white-space: nowrap; overflow: hidden;
+    background: var(--neon-red); color: #fff; font-family: 'Share Tech Mono', monospace; font-size: 11px; font-weight: 500;
+    padding: 4px 0; white-space: nowrap; overflow: hidden; letter-spacing: 1px;
   }
   .ticker-inner { display: inline-block; animation: ticker 30s linear infinite; }
   @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
   /* Layout */
   .shell { display: grid; grid-template-rows: auto 1fr auto; height: calc(100vh - 24px); }
-  header { display: flex; align-items: center; justify-content: space-between; padding: 16px 28px; border-bottom: 1px solid var(--border); }
-  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 3px; color: var(--green); }
-  .round-badge { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); border: 1px solid var(--border); padding: 4px 12px; border-radius: 4px; }
-  .players-badge { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--green); }
+  header {
+    display: flex; align-items: center; justify-content: space-between; padding: 14px 28px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(90deg, rgba(0,200,150,0.04), transparent, rgba(77,159,255,0.04));
+  }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 4px; color: var(--jade); text-shadow: 0 0 20px rgba(0,200,150,0.5); }
+  .logo span { color: var(--neon-red); text-shadow: 0 0 20px rgba(255,45,85,0.5); }
+  .round-badge { font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--muted); border: 1px solid var(--border); padding: 4px 12px; border-radius: 2px; letter-spacing: 1px; }
+  .players-badge { font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--jade); letter-spacing: 1px; }
 
-  main { display: grid; grid-template-columns: 1fr 320px; gap: 0; overflow: hidden; }
+  main { display: grid; grid-template-columns: 1fr 300px; gap: 0; overflow: hidden; }
 
-  /* Content area */
   .content { padding: 28px; overflow-y: auto; border-right: 1px solid var(--border); }
-  
-  /* Phase: lobby */
-  .lobby-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 32px; }
-  .lobby-title { font-family: 'Bebas Neue', sans-serif; font-size: 96px; letter-spacing: 8px; color: var(--green); line-height: 1; text-align: center; }
-  .lobby-sub { font-family: 'DM Mono', monospace; font-size: 14px; color: var(--muted); text-align: center; letter-spacing: 2px; }
-  .join-url { font-family: 'DM Mono', monospace; font-size: 20px; color: var(--gold); border: 1px solid var(--gold); padding: 12px 24px; border-radius: 6px; }
+
+  /* Lobby */
+  .lobby-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 24px; }
+  .lobby-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 100px; letter-spacing: 10px; line-height: 1; text-align: center;
+    color: var(--jade); text-shadow: 0 0 40px rgba(0,200,150,0.4), 0 0 80px rgba(0,200,150,0.15);
+  }
+  .lobby-hk { font-family: 'Noto Sans HK', sans-serif; font-size: 18px; color: var(--neon-red); letter-spacing: 6px; text-shadow: 0 0 12px rgba(255,45,85,0.6); }
+  .lobby-sub { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: var(--muted); text-align: center; letter-spacing: 2px; }
+  .join-url { font-family: 'Share Tech Mono', monospace; font-size: 18px; color: var(--gold); border: 1px solid rgba(240,165,0,0.4); padding: 10px 22px; border-radius: 2px; background: rgba(240,165,0,0.05); }
   .pulse { animation: pulse 2s ease-in-out infinite; }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-  /* Phase: news */
-  .news-header { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--text); margin-bottom: 6px; }
-  .news-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--gold); letter-spacing: 3px; margin-bottom: 20px; }
-  .news-body { font-size: 18px; line-height: 1.7; color: #b0b8c8; background: var(--surface); border-left: 3px solid var(--gold); padding: 20px 24px; border-radius: 0 8px 8px 0; margin-bottom: 28px; }
-  
-  .markets-row { display: flex; gap: 12px; flex-wrap: wrap; }
-  .market-chip { font-family: 'DM Mono', monospace; font-size: 13px; background: var(--surface); border: 1px solid var(--border); padding: 8px 16px; border-radius: 4px; color: var(--muted); }
+  /* News */
+  .news-header { font-family: 'Bebas Neue', sans-serif; font-size: 46px; color: var(--text); margin-bottom: 6px; line-height: 1.1; }
+  .news-label { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--gold); letter-spacing: 3px; margin-bottom: 16px; }
+  .news-body { font-size: 17px; line-height: 1.75; color: #8fa0c0; background: var(--surface); border-left: 3px solid var(--gold); padding: 18px 22px; border-radius: 0 6px 6px 0; margin-bottom: 24px; }
+  .markets-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .market-chip { font-family: 'Share Tech Mono', monospace; font-size: 12px; background: var(--surface); border: 1px solid var(--border); padding: 7px 14px; border-radius: 2px; color: var(--harbour); letter-spacing: 1px; }
 
-  /* Phase: voting */
-  .vote-timer { font-family: 'Bebas Neue', sans-serif; font-size: 72px; color: var(--green); text-align: center; margin: 16px 0; }
-  .vote-timer.urgent { color: var(--red); animation: blink 0.5s step-end infinite; }
+  /* Voting */
+  .vote-timer { font-family: 'Bebas Neue', sans-serif; font-size: 80px; color: var(--jade); text-align: center; margin: 16px 0; text-shadow: 0 0 30px rgba(0,200,150,0.4); }
+  .vote-timer.urgent { color: var(--neon-red); text-shadow: 0 0 30px rgba(255,45,85,0.6); animation: blink 0.5s step-end infinite; }
   @keyframes blink { 50% { opacity: 0.3; } }
-  .vote-count { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--muted); text-align: center; }
+  .vote-count { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: var(--muted); text-align: center; letter-spacing: 1px; }
 
-  /* Phase: reveal */
-  .reveal-section { margin-top: 24px; }
-  .reveal-label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 3px; color: var(--accent); margin-bottom: 16px; }
-  .market-results { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .market-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
-  .market-name { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
-  .market-move { font-family: 'Bebas Neue', sans-serif; font-size: 36px; }
-  .market-card.positive { border-color: var(--green); }
-  .market-card.positive .market-move { color: var(--green); }
-  .market-card.negative { border-color: var(--red); }
-  .market-card.negative .market-move { color: var(--red); }
-  .analysis-box { background: var(--surface); border: 1px solid var(--blue); border-radius: 8px; padding: 20px; margin-top: 16px; font-size: 15px; line-height: 1.7; color: #b0b8c8; }
-  .analysis-box strong { color: var(--blue); font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 2px; display: block; margin-bottom: 10px; }
+  /* Reveal */
+  .reveal-section { margin-top: 20px; }
+  .market-results { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .market-card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 16px; transition: all 0.3s; }
+  .market-name { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--muted); margin-bottom: 6px; letter-spacing: 1px; }
+  .market-move { font-family: 'Bebas Neue', sans-serif; font-size: 38px; }
+  .market-card.positive { border-color: rgba(0,200,150,0.5); background: rgba(0,200,150,0.05); }
+  .market-card.positive .market-move { color: var(--jade); text-shadow: 0 0 16px rgba(0,200,150,0.4); }
+  .market-card.negative { border-color: rgba(255,45,85,0.5); background: rgba(255,45,85,0.05); }
+  .market-card.negative .market-move { color: var(--neon-red); text-shadow: 0 0 16px rgba(255,45,85,0.4); }
+  .analysis-box { background: var(--surface); border: 1px solid rgba(77,159,255,0.3); border-radius: 6px; padding: 18px; margin-top: 14px; font-size: 14px; line-height: 1.75; color: #8fa0c0; }
+  .analysis-box strong { color: var(--harbour); font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 2px; display: block; margin-bottom: 10px; }
 
-  /* Leaderboard panel */
-  .sidebar { padding: 20px; overflow-y: auto; }
-  .sidebar-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--muted); margin-bottom: 16px; }
-  .lb-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 6px; margin-bottom: 6px; background: var(--surface); border: 1px solid var(--border); transition: all 0.4s; }
-  .lb-row:first-child { border-color: var(--gold); }
-  .lb-rank { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--muted); width: 24px; }
+  /* Leaderboard */
+  .sidebar { padding: 18px; overflow-y: auto; background: rgba(13,17,32,0.5); }
+  .sidebar-title { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 3px; color: var(--muted); margin-bottom: 14px; }
+  .lb-row { display: flex; align-items: center; gap: 10px; padding: 9px 11px; border-radius: 4px; margin-bottom: 5px; background: var(--surface); border: 1px solid var(--border); transition: all 0.4s; }
+  .lb-row:first-child { border-color: rgba(240,165,0,0.5); background: rgba(240,165,0,0.05); }
+  .lb-rank { font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--muted); width: 22px; }
   .lb-row:first-child .lb-rank { color: var(--gold); }
   .lb-name { font-size: 13px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .lb-capital { font-family: 'DM Mono', monospace; font-size: 13px; }
-  .lb-capital.up { color: var(--green); }
-  .lb-capital.down { color: var(--red); }
+  .lb-capital { font-family: 'Share Tech Mono', monospace; font-size: 12px; }
+  .lb-capital.up { color: var(--jade); }
+  .lb-capital.down { color: var(--neon-red); }
 
-  /* Controls */
-  footer { padding: 16px 28px; border-top: 1px solid var(--border); display: flex; gap: 12px; align-items: center; }
-  .btn { font-family: 'DM Mono', monospace; font-size: 13px; letter-spacing: 1px; padding: 10px 24px; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
-  .btn-primary { background: var(--green); color: #000; font-weight: 600; }
-  .btn-primary:hover { background: #00ffa8; transform: translateY(-1px); }
-  .btn-danger { background: transparent; color: var(--red); border: 1px solid var(--red); }
-  .btn-danger:hover { background: var(--red); color: #fff; }
+  /* Footer controls */
+  footer { padding: 14px 28px; border-top: 1px solid var(--border); display: flex; gap: 10px; align-items: center; background: rgba(6,8,15,0.8); }
+  .btn { font-family: 'Share Tech Mono', monospace; font-size: 12px; letter-spacing: 1px; padding: 10px 22px; border: none; border-radius: 3px; cursor: pointer; transition: all 0.2s; }
+  .btn-primary { background: var(--jade); color: #000; font-weight: 700; }
+  .btn-primary:hover { background: #00ffb8; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,200,150,0.3); }
   .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
-  .btn-ghost:hover { color: var(--text); border-color: var(--text); }
-  .btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
-  .phase-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 2px; margin-left: auto; }
+  .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+  .btn:disabled { opacity: 0.25; cursor: not-allowed; transform: none; }
+  .phase-label { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 2px; margin-left: auto; }
 
   .hidden { display: none !important; }
-  
-  /* End screen */
-  .end-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 16px; }
-  .end-title { font-family: 'Bebas Neue', sans-serif; font-size: 72px; color: var(--gold); letter-spacing: 6px; }
-  .end-sub { font-family: 'DM Mono', monospace; font-size: 14px; color: var(--muted); }
-  .winner-name { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--green); }
 
-  .scanline { position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px); z-index: 9999; }
+  /* End */
+  .end-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 16px; }
+  .end-title { font-family: 'Bebas Neue', sans-serif; font-size: 72px; color: var(--gold); letter-spacing: 6px; text-shadow: 0 0 30px rgba(240,165,0,0.4); }
+  .end-sub { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: var(--muted); letter-spacing: 2px; }
+  .winner-name { font-family: 'Bebas Neue', sans-serif; font-size: 52px; color: var(--jade); text-shadow: 0 0 24px rgba(0,200,150,0.5); }
+
+  /* HK skyline decorative strip */
+  .skyline { position: fixed; bottom: 48px; left: 0; right: 0; height: 60px; pointer-events: none; opacity: 0.06; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 60'%3E%3Crect x='0' y='20' width='8' height='40' fill='%23fff'/%3E%3Crect x='10' y='10' width='12' height='50' fill='%23fff'/%3E%3Crect x='24' y='5' width='6' height='55' fill='%23fff'/%3E%3Crect x='32' y='15' width='20' height='45' fill='%23fff'/%3E%3Crect x='54' y='0' width='10' height='60' fill='%23fff'/%3E%3Crect x='66' y='20' width='8' height='40' fill='%23fff'/%3E%3Crect x='76' y='8' width='14' height='52' fill='%23fff'/%3E%3Crect x='92' y='12' width='10' height='48' fill='%23fff'/%3E%3Crect x='104' y='4' width='8' height='56' fill='%23fff'/%3E%3Crect x='114' y='18' width='16' height='42' fill='%23fff'/%3E%3Crect x='132' y='2' width='6' height='58' fill='%23fff'/%3E%3Crect x='140' y='14' width='12' height='46' fill='%23fff'/%3E%3Crect x='154' y='22' width='8' height='38' fill='%23fff'/%3E%3Crect x='164' y='6' width='18' height='54' fill='%23fff'/%3E%3Crect x='184' y='16' width='10' height='44' fill='%23fff'/%3E%3Crect x='196' y='0' width='8' height='60' fill='%23fff'/%3E%3Crect x='206' y='10' width='14' height='50' fill='%23fff'/%3E%3Crect x='222' y='20' width='10' height='40' fill='%23fff'/%3E%3Crect x='234' y='4' width='6' height='56' fill='%23fff'/%3E%3Crect x='242' y='12' width='20' height='48' fill='%23fff'/%3E%3C/svg%3E") repeat-x bottom; z-index: 0; }
+  .scanline { position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px); z-index: 9999; }
 </style>
 </head>
 <body>
 <div class="scanline"></div>
+<div class="skyline"></div>
 <div class="ticker">
   <span class="ticker-inner">
-    MARKET CALL LIVE &nbsp;◆&nbsp; ROUND IN PROGRESS &nbsp;◆&nbsp; BUY THE DIP OR SELL THE RALLY? &nbsp;◆&nbsp; FUNDAMENTALS MATTER &nbsp;◆&nbsp; LONG OR SHORT? &nbsp;◆&nbsp; 
-    MARKET CALL LIVE &nbsp;◆&nbsp; ROUND IN PROGRESS &nbsp;◆&nbsp; BUY THE DIP OR SELL THE RALLY? &nbsp;◆&nbsp; FUNDAMENTALS MATTER &nbsp;◆&nbsp; LONG OR SHORT? &nbsp;◆&nbsp;
+    市場通話 MARKET CALL LIVE &nbsp;◆&nbsp; 買賣 LONG OR SHORT? &nbsp;◆&nbsp; 香港金融市場 HK FINANCIAL MARKETS &nbsp;◆&nbsp; BUY THE DIP OR SELL THE RALLY? &nbsp;◆&nbsp; 基本面分析 FUNDAMENTALS MATTER &nbsp;◆&nbsp;
+    市場通話 MARKET CALL LIVE &nbsp;◆&nbsp; 買賣 LONG OR SHORT? &nbsp;◆&nbsp; 香港金融市場 HK FINANCIAL MARKETS &nbsp;◆&nbsp; BUY THE DIP OR SELL THE RALLY? &nbsp;◆&nbsp; 基本面分析 FUNDAMENTALS MATTER &nbsp;◆&nbsp;
   </span>
 </div>
 
 <div class="shell">
   <header>
-    <div class="logo">Market Call</div>
+    <div class="logo">Market <span>Call</span></div>
     <div class="players-badge" id="playerCount">0 PLAYERS CONNECTED</div>
     <div class="round-badge" id="roundBadge">LOBBY</div>
   </header>
@@ -184,14 +199,15 @@ function updateContent(state) {
 
   if (state.phase === 'lobby') {
     const playerUrl = `${location.protocol}//${location.host}/player.html`;
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&color=00e896&bgcolor=0a0c0f&data=${encodeURIComponent(playerUrl)}`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&color=00c896&bgcolor=06080f&data=${encodeURIComponent(playerUrl)}`;
     el.innerHTML = `
       <div class="lobby-screen">
         <div class="lobby-title">Market<br>Call</div>
+        <div class="lobby-hk">香港金融市場</div>
         <div class="lobby-sub">SCAN TO JOIN ON YOUR PHONE</div>
-        <img src="${qrUrl}" style="width:180px;height:180px;border-radius:12px;border:2px solid var(--green);margin:8px 0" />
+        <img src="${qrUrl}" style="width:180px;height:180px;border-radius:4px;border:2px solid rgba(0,200,150,0.5);box-shadow:0 0 30px rgba(0,200,150,0.2);margin:4px 0" />
         <div class="join-url pulse">📱 ${location.host}/player.html</div>
-        <div class="lobby-sub" style="color:#3b82f6">Waiting for host to start...</div>
+        <div class="lobby-sub" style="color:var(--harbour)">Waiting for host to start...</div>
       </div>`;
   } else if (state.phase === 'news' && state.round) {
     el.innerHTML = `
@@ -278,3 +294,4 @@ function updateButtons(state) {
 </script>
 </body>
 </html>
+
