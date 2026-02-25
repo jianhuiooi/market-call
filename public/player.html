@@ -176,6 +176,11 @@ socket.on('votesReceived', () => {
   }
 });
 
+socket.on('finalResult', ({ totalCapital, leaderboard }) => {
+  myCapital = totalCapital;
+  document.getElementById('displayCapital').textContent = '$' + totalCapital.toLocaleString();
+});
+
 socket.on('roundResult', ({ pnl, totalCapital }) => {
   myCapital = totalCapital;
   document.getElementById('displayCapital').textContent = '$' + totalCapital.toLocaleString();
@@ -188,7 +193,7 @@ socket.on('roundResult', ({ pnl, totalCapital }) => {
       <div class="result-label">ROUND P&L</div>
       <div class="result-pnl ${cls}">${sign}$${Math.abs(pnl).toFixed(0)}</div>
       <div class="result-total">Portfolio: $${totalCapital.toLocaleString()}</div>
-      <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);margin-top:24px">Waiting for host to continue...</p>
+      <p style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);margin-top:24px;letter-spacing:1px">Waiting for host to continue...</p>
     </div>`;
 });
 
@@ -224,15 +229,33 @@ function renderPhase(state) {
       el.innerHTML = `<div class="wait-box"><div class="wait-title">PRICES REVEALED</div><p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);margin-top:12px">Watch the main screen for analysis!</p></div>`;
     }
   } else if (state.phase === 'end') {
+    const lb = state.leaderboard;
+    const rank = lb.findIndex(p => p.capital === myCapital) + 1;
+    const diff = myCapital - 10000;
+    const sign = diff >= 0 ? '+' : '';
+    const col = diff >= 0 ? 'var(--jade)' : 'var(--neon-red)';
+    const medals = ['🥇', '🥈', '🥉'];
+    const medal = rank <= 3 ? medals[rank - 1] : `#${rank}`;
     el.innerHTML = `
       <div class="end-box">
-        <div class="end-emoji">🏆</div>
+        <div style="font-size:56px;margin-bottom:8px">${medal}</div>
         <div class="end-title">GAME OVER</div>
-        <div style="font-family:'DM Mono',monospace;font-size:14px;color:var(--muted)">Final Portfolio</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--jade);margin-top:4px">$${myCapital.toLocaleString()}</div>
-        <div style="font-family:'Share Tech Mono',monospace;font-size:13px;color:${myCapital >= 10000 ? 'var(--jade)' : 'var(--neon-red)'};margin-top:8px">
-          ${myCapital >= 10000 ? '▲' : '▼'} $${Math.abs(myCapital - 10000).toLocaleString()} vs starting capital
-        </div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:2px;margin-bottom:12px">YOUR FINAL PORTFOLIO</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:52px;color:var(--jade);text-shadow:0 0 20px rgba(0,200,150,0.4)">$${myCapital.toLocaleString()}</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:14px;color:${col};margin-top:8px">${sign}$${Math.abs(diff).toLocaleString()} vs starting capital</div>
+        <hr style="border:none;border-top:1px solid var(--border);margin:24px 0">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:12px">LEADERBOARD</div>
+        ${lb.slice(0, 5).map((p, i) => {
+          const isMe = p.capital === myCapital;
+          const d = p.capital - 10000;
+          const s = d >= 0 ? '+' : '';
+          const c = d >= 0 ? 'var(--jade)' : 'var(--neon-red)';
+          return `<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:4px;margin-bottom:4px;background:${isMe ? 'rgba(0,200,150,0.08)' : 'var(--surface)'};border:1px solid ${isMe ? 'rgba(0,200,150,0.3)' : 'var(--border)'}">
+            <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);width:20px">${i + 1}</span>
+            <span style="flex:1;font-size:13px;color:${isMe ? 'var(--jade)' : 'var(--text)'}">${p.name}${isMe ? ' ◀' : ''}</span>
+            <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:${c}">${s}$${Math.abs(d).toLocaleString()}</span>
+          </div>`;
+        }).join('')}
       </div>`;
   }
 }
@@ -314,4 +337,3 @@ document.getElementById('playerName').addEventListener('keydown', e => { if (e.k
 </script>
 </body>
 </html>
-
