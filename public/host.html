@@ -241,13 +241,45 @@ function updateContent(state) {
         <div class="analysis-box"><strong>FUNDAMENTAL ANALYSIS</strong>${state.round.analysis}</div>
       </div>`;
   } else if (state.phase === 'end') {
-    const winner = state.leaderboard[0];
+    const lb = state.leaderboard;
+    const medals = ['🥇', '🥈', '🥉'];
+    const podiumColors = ['var(--gold)', '#b0bec5', '#cd7f32'];
+    const podiumGlow = ['rgba(240,165,0,0.4)', 'rgba(176,190,197,0.3)', 'rgba(205,127,50,0.3)'];
     el.innerHTML = `
       <div class="end-screen">
-        <div class="end-title">🏆 Game Over</div>
-        <div class="end-sub">CHAMPION</div>
-        <div class="winner-name">${winner ? winner.name : '—'}</div>
-        <div style="font-family:'DM Mono',monospace;color:var(--green);font-size:24px">${winner ? '$' + winner.capital.toLocaleString() : ''}</div>
+        <div class="end-title">🏆 FINAL RESULTS</div>
+        <div class="lobby-hk" style="margin-bottom:24px">恭喜 CONGRATULATIONS</div>
+        <div style="display:flex;align-items:flex-end;gap:16px;margin-bottom:32px;justify-content:center">
+          ${[1, 0, 2].map(i => {
+            const p = lb[i];
+            if (!p) return '';
+            const diff = p.capital - 10000;
+            const sign = diff >= 0 ? '+' : '';
+            const heights = ['120px', '160px', '90px'];
+            const order = [1, 0, 2];
+            return `
+              <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+                <div style="font-size:32px">${medals[i]}</div>
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:${podiumColors[i]};text-shadow:0 0 16px ${podiumGlow[i]};max-width:120px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</div>
+                <div style="font-family:'Share Tech Mono',monospace;font-size:13px;color:${podiumColors[i]}">${sign}$${Math.abs(diff).toLocaleString()}</div>
+                <div style="width:110px;height:${heights[order.indexOf(i)]};background:linear-gradient(180deg,${podiumColors[i]}22,${podiumColors[i]}11);border:1px solid ${podiumColors[i]}55;border-bottom:none;display:flex;align-items:center;justify-content:center;border-radius:4px 4px 0 0">
+                  <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:${podiumColors[i]}">${i + 1}</div>
+                </div>
+              </div>`;
+          }).join('')}
+        </div>
+        <div style="width:100%;max-width:420px">
+          ${lb.slice(3).map((p, i) => {
+            const diff = p.capital - 10000;
+            const sign = diff >= 0 ? '+' : '';
+            const col = diff >= 0 ? 'var(--jade)' : 'var(--neon-red)';
+            return `<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--border);font-family:'Share Tech Mono',monospace;font-size:12px">
+              <span style="color:var(--muted);width:20px">${i + 4}</span>
+              <span style="flex:1;color:var(--text)">${p.name}</span>
+              <span style="color:${col}">${sign}$${Math.abs(diff).toLocaleString()}</span>
+            </div>`;
+          }).join('')}
+        </div>
       </div>`;
   }
 }
@@ -294,4 +326,3 @@ function updateButtons(state) {
 </script>
 </body>
 </html>
-
