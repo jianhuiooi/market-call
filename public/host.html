@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Market Call — Host</title>
 <script src="/socket.io/socket.io.js"></script>
+<script>if (typeof io === 'undefined') { document.write('<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"><\/script>'); }</script>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -182,11 +183,14 @@ function updateContent(state) {
   clearInterval(timerInterval);
 
   if (state.phase === 'lobby') {
+    const playerUrl = `${location.protocol}//${location.host}/player.html`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&color=00e896&bgcolor=0a0c0f&data=${encodeURIComponent(playerUrl)}`;
     el.innerHTML = `
       <div class="lobby-screen">
         <div class="lobby-title">Market<br>Call</div>
-        <div class="lobby-sub">JOIN THE GAME ON YOUR PHONE</div>
-        <div class="join-url pulse">📱 ${location.host}/player</div>
+        <div class="lobby-sub">SCAN TO JOIN ON YOUR PHONE</div>
+        <img src="${qrUrl}" style="width:180px;height:180px;border-radius:12px;border:2px solid var(--green);margin:8px 0" />
+        <div class="join-url pulse">📱 ${location.host}/player.html</div>
         <div class="lobby-sub" style="color:#3b82f6">Waiting for host to start...</div>
       </div>`;
   } else if (state.phase === 'news' && state.round) {
