@@ -6,111 +6,119 @@
 <title>Market Call — Player</title>
 <script src="/socket.io/socket.io.js"></script>
 <script>if (typeof io === 'undefined') { document.write('<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"><\/script>'); }</script>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Noto+Sans+HK:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0c0f;
-    --surface: #111318;
-    --border: #1e2330;
-    --green: #00e896;
-    --red: #ff3b5c;
-    --gold: #f5c842;
-    --blue: #3b82f6;
-    --text: #e8eaf0;
-    --muted: #5a6070;
+    --bg: #06080f;
+    --surface: #0d1120;
+    --border: #1a2240;
+    --jade: #00c896;
+    --neon-red: #ff2d55;
+    --gold: #f0a500;
+    --harbour: #4d9fff;
+    --text: #dde4f0;
+    --muted: #4a5570;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; overscroll-behavior: none; }
+  body {
+    background: var(--bg);
+    background-image: radial-gradient(ellipse 80% 50% at 50% 100%, rgba(77,159,255,0.06) 0%, transparent 70%);
+    color: var(--text); font-family: 'Noto Sans HK', sans-serif; min-height: 100vh; overscroll-behavior: none;
+  }
 
   .screen { display: none; padding: 24px 20px; min-height: 100vh; }
   .screen.active { display: block; }
 
-  /* Join screen */
-  .join-logo { font-family: 'Bebas Neue', sans-serif; font-size: 52px; color: var(--green); letter-spacing: 4px; margin-bottom: 4px; }
-  .join-sub { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 2px; margin-bottom: 40px; }
+  /* Join */
+  .join-logo { font-family: 'Bebas Neue', sans-serif; font-size: 52px; color: var(--jade); letter-spacing: 4px; margin-bottom: 2px; text-shadow: 0 0 20px rgba(0,200,150,0.4); }
+  .join-logo span { color: var(--neon-red); text-shadow: 0 0 20px rgba(255,45,85,0.4); }
+  .join-hk { font-family: 'Noto Sans HK', sans-serif; font-size: 13px; color: var(--neon-red); letter-spacing: 4px; margin-bottom: 32px; opacity: 0.8; }
   .input-group { margin-bottom: 16px; }
-  .input-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 2px; margin-bottom: 8px; display: block; }
+  .input-label { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 2px; margin-bottom: 8px; display: block; }
   input[type=text] {
     width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text);
-    font-family: 'DM Sans', sans-serif; font-size: 16px; padding: 14px 16px; border-radius: 8px;
+    font-family: 'Noto Sans HK', sans-serif; font-size: 16px; padding: 14px 16px; border-radius: 4px;
     outline: none; transition: border-color 0.2s;
   }
-  input[type=text]:focus { border-color: var(--green); }
-  .btn-full { width: 100%; background: var(--green); color: #000; font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 600; letter-spacing: 2px; padding: 16px; border: none; border-radius: 8px; cursor: pointer; margin-top: 8px; transition: all 0.2s; }
+  input[type=text]:focus { border-color: var(--jade); box-shadow: 0 0 0 2px rgba(0,200,150,0.1); }
+  .btn-full {
+    width: 100%; background: var(--jade); color: #000; font-family: 'Share Tech Mono', monospace;
+    font-size: 14px; font-weight: 700; letter-spacing: 2px; padding: 16px; border: none; border-radius: 4px;
+    cursor: pointer; margin-top: 8px; transition: all 0.2s;
+  }
   .btn-full:active { transform: scale(0.98); }
   .btn-full:disabled { opacity: 0.3; }
 
-  /* Status */
-  .status-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-  .player-name { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
-  .capital-display { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: var(--green); }
-  .capital-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 1px; }
+  /* Status bar */
+  .status-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .player-name { font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--muted); letter-spacing: 1px; }
+  .capital-display { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: var(--jade); text-shadow: 0 0 16px rgba(0,200,150,0.3); }
+  .capital-label { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 1px; }
 
   /* Wait */
-  .wait-box { text-align: center; padding: 40px 20px; }
-  .wait-title { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--muted); margin-bottom: 12px; }
-  .wait-dot { display: inline-block; width: 8px; height: 8px; background: var(--green); border-radius: 50%; margin: 0 3px; animation: bounce 1.2s ease-in-out infinite; }
+  .wait-box { text-align: center; padding: 48px 20px; }
+  .wait-title { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--muted); margin-bottom: 16px; letter-spacing: 2px; }
+  .wait-dot { display: inline-block; width: 8px; height: 8px; background: var(--jade); border-radius: 50%; margin: 0 3px; animation: bounce 1.2s ease-in-out infinite; }
   .wait-dot:nth-child(2) { animation-delay: 0.2s; }
   .wait-dot:nth-child(3) { animation-delay: 0.4s; }
   @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
 
   /* Voting */
-  .round-title { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--text); margin-bottom: 4px; }
-  .timer-bar-wrap { background: var(--surface); border-radius: 4px; height: 6px; margin: 12px 0 20px; overflow: hidden; }
-  .timer-bar { height: 100%; background: var(--green); border-radius: 4px; transition: width 1s linear, background 0.3s; }
-  .timer-bar.urgent { background: var(--red); }
+  .round-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: var(--text); margin-bottom: 4px; }
+  .timer-bar-wrap { background: var(--surface); border-radius: 2px; height: 5px; margin: 10px 0 18px; overflow: hidden; }
+  .timer-bar { height: 100%; background: var(--jade); border-radius: 2px; transition: width 1s linear, background 0.3s; }
+  .timer-bar.urgent { background: var(--neon-red); }
 
-  .market-section { margin-bottom: 20px; }
-  .market-label { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); letter-spacing: 1px; margin-bottom: 8px; }
-  .direction-btns { display: flex; gap: 8px; margin-bottom: 10px; }
+  .market-section { margin-bottom: 18px; }
+  .market-label { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--harbour); letter-spacing: 2px; margin-bottom: 8px; }
+  .direction-btns { display: flex; gap: 8px; margin-bottom: 8px; }
   .dir-btn {
-    flex: 1; padding: 12px 8px; border-radius: 8px; font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500;
-    border: 2px solid var(--border); background: var(--surface); color: var(--muted); cursor: pointer; transition: all 0.15s; text-align: center;
-  }
-  .dir-btn.long-btn.selected { background: rgba(0,232,150,0.15); border-color: var(--green); color: var(--green); }
-  .dir-btn.short-btn.selected { background: rgba(255,59,92,0.15); border-color: var(--red); color: var(--red); }
-  .dir-btn.skip-btn.selected { background: rgba(90,96,112,0.15); border-color: var(--muted); color: var(--muted); }
-
-  .amount-row { display: flex; gap: 8px; flex-wrap: wrap; }
-  .amt-btn {
-    flex: 1; min-width: 60px; padding: 8px 4px; border-radius: 6px; font-family: 'DM Mono', monospace; font-size: 12px;
+    flex: 1; padding: 11px 6px; border-radius: 4px; font-family: 'Share Tech Mono', monospace; font-size: 13px;
     border: 1px solid var(--border); background: var(--surface); color: var(--muted); cursor: pointer; transition: all 0.15s; text-align: center;
   }
-  .amt-btn.selected { border-color: var(--gold); color: var(--gold); background: rgba(245,200,66,0.1); }
+  .dir-btn.long-btn.selected { background: rgba(0,200,150,0.12); border-color: var(--jade); color: var(--jade); box-shadow: 0 0 12px rgba(0,200,150,0.15); }
+  .dir-btn.short-btn.selected { background: rgba(255,45,85,0.12); border-color: var(--neon-red); color: var(--neon-red); box-shadow: 0 0 12px rgba(255,45,85,0.15); }
+  .dir-btn.skip-btn.selected { background: rgba(74,85,112,0.2); border-color: var(--muted); color: var(--muted); }
 
-  .submit-section { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+  .amount-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .amt-btn {
+    flex: 1; min-width: 58px; padding: 8px 4px; border-radius: 3px; font-family: 'Share Tech Mono', monospace; font-size: 11px;
+    border: 1px solid var(--border); background: var(--surface); color: var(--muted); cursor: pointer; transition: all 0.15s; text-align: center;
+  }
+  .amt-btn.selected { border-color: var(--gold); color: var(--gold); background: rgba(240,165,0,0.08); }
+
+  .submit-section { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border); }
 
   /* Result */
-  .result-box { text-align: center; padding: 32px 20px; }
-  .result-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 2px; margin-bottom: 8px; }
+  .result-box { text-align: center; padding: 32px 16px; }
+  .result-label { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 2px; margin-bottom: 8px; }
   .result-pnl { font-family: 'Bebas Neue', sans-serif; font-size: 72px; }
-  .result-pnl.up { color: var(--green); }
-  .result-pnl.down { color: var(--red); }
-  .result-total { font-family: 'DM Mono', monospace; font-size: 16px; color: var(--text); margin-top: 8px; }
+  .result-pnl.up { color: var(--jade); text-shadow: 0 0 24px rgba(0,200,150,0.4); }
+  .result-pnl.down { color: var(--neon-red); text-shadow: 0 0 24px rgba(255,45,85,0.4); }
+  .result-total { font-family: 'Share Tech Mono', monospace; font-size: 14px; color: var(--text); margin-top: 8px; }
 
   /* End */
   .end-box { text-align: center; padding: 40px 20px; }
-  .end-emoji { font-size: 64px; margin-bottom: 16px; }
-  .end-title { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--gold); margin-bottom: 8px; }
+  .end-title { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--gold); margin-bottom: 8px; text-shadow: 0 0 24px rgba(240,165,0,0.4); letter-spacing: 4px; }
 
-  .tag { display: inline-block; font-family: 'DM Mono', monospace; font-size: 10px; padding: 2px 8px; border-radius: 3px; letter-spacing: 1px; }
-  .tag-live { background: rgba(255,59,92,0.2); color: var(--red); border: 1px solid var(--red); }
+  .tag { display: inline-block; font-family: 'Share Tech Mono', monospace; font-size: 10px; padding: 2px 8px; border-radius: 2px; letter-spacing: 1px; }
+  .tag-live { background: rgba(255,45,85,0.15); color: var(--neon-red); border: 1px solid rgba(255,45,85,0.4); }
 
-  .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
 </style>
 </head>
 <body>
 
 <!-- JOIN SCREEN -->
 <div class="screen active" id="screenJoin">
-  <div class="join-logo">Market<br>Call</div>
-  <div class="join-sub">LIVE TRADING GAME</div>
+  <div class="join-logo">Market <span>Call</span></div>
+  <div class="join-hk">香港金融市場</div>
   <div class="input-group">
     <label class="input-label">YOUR NAME</label>
     <input type="text" id="playerName" placeholder="e.g. Warren Buffett" maxlength="20" />
   </div>
   <button class="btn-full" id="joinBtn" onclick="joinGame()">JOIN GAME</button>
-  <p style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:20px;text-align:center">You'll start with $10,000 to trade across 4 rounds</p>
+  <p style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);margin-top:20px;text-align:center;letter-spacing:1px">You'll start with $10,000 to trade across 4 rounds</p>
 </div>
 
 <!-- GAME SCREEN -->
@@ -221,8 +229,8 @@ function renderPhase(state) {
         <div class="end-emoji">🏆</div>
         <div class="end-title">GAME OVER</div>
         <div style="font-family:'DM Mono',monospace;font-size:14px;color:var(--muted)">Final Portfolio</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--green);margin-top:4px">$${myCapital.toLocaleString()}</div>
-        <div style="font-family:'DM Mono',monospace;font-size:13px;color:${myCapital >= 10000 ? 'var(--green)' : 'var(--red)'};margin-top:8px">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--jade);margin-top:4px">$${myCapital.toLocaleString()}</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:13px;color:${myCapital >= 10000 ? 'var(--jade)' : 'var(--neon-red)'};margin-top:8px">
           ${myCapital >= 10000 ? '▲' : '▼'} $${Math.abs(myCapital - 10000).toLocaleString()} vs starting capital
         </div>
       </div>`;
@@ -295,7 +303,7 @@ function startPlayerTimer(endTime) {
     const pct = Math.round((remaining / 60) * 100);
     const timerEl = document.getElementById('timerText');
     const barEl = document.getElementById('timerBar');
-    if (timerEl) { timerEl.textContent = remaining; timerEl.style.color = remaining <= 10 ? 'var(--red)' : 'var(--green)'; }
+    if (timerEl) { timerEl.textContent = remaining; timerEl.style.color = remaining <= 10 ? 'var(--neon-red)' : 'var(--jade)'; }
     if (barEl) { barEl.style.width = pct + '%'; barEl.classList.toggle('urgent', remaining <= 10); }
     if (remaining <= 0) clearInterval(timerInterval);
   }, 200);
@@ -306,3 +314,4 @@ document.getElementById('playerName').addEventListener('keydown', e => { if (e.k
 </script>
 </body>
 </html>
+
