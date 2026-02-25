@@ -148,6 +148,8 @@ io.on('connection', (socket) => {
         io.to(sid).emit('roundResult', { pnl, totalCapital: Math.round((STARTING_CAPITAL + gameState.players[sid].pnl) * 100) / 100 });
       }
     }
+    // Mark votes as processed so next round doesn't double-count
+    gameState.votesProcessed = true;
     broadcastState();
   });
 
@@ -156,9 +158,18 @@ io.on('connection', (socket) => {
       gameState.currentRound++;
       gameState.phase = 'news';
       gameState.votes = {};
+      gameState.votesProcessed = false;
       gameState.votingOpen = false;
       broadcastState();
     } else {
+      // Final round ended — send final results to all players then go to end
+      const lb = getLeaderboard();
+      for (const [sid, player] of Object.entries(gameState.players)) {
+        io.to(sid).emit('finalResult', {
+          totalCapital: Math.round((STARTING_CAPITAL + player.pnl) * 100) / 100,
+          leaderboard: lb
+        });
+      }
       gameState.phase = 'end';
       broadcastState();
     }
@@ -176,4 +187,3 @@ io.on('connection', (socket) => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => console.log(`Market Call running on http://localhost:${PORT}`));
-
