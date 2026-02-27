@@ -9,123 +9,113 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Noto+Sans+HK:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #06080f;
-    --surface: #0d1120;
-    --border: #1a2240;
-    --jade: #00c896;
-    --neon-red: #ff2d55;
-    --gold: #f0a500;
-    --harbour: #4d9fff;
-    --text: #dde4f0;
-    --muted: #4a5570;
-    --accent: #00c896;
-    --purple: #9b5de5;
+    --bg: #06080f; --surface: #0d1120; --border: #1a2240;
+    --jade: #00c896; --neon-red: #ff2d55; --gold: #f0a500;
+    --harbour: #4d9fff; --text: #dde4f0; --muted: #4a5570;
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * { margin:0; padding:0; box-sizing:border-box; }
   body {
     background: var(--bg);
-    background-image:
-      radial-gradient(ellipse 80% 40% at 50% 100%, rgba(77,159,255,0.07) 0%, transparent 70%),
+    background-image: radial-gradient(ellipse 80% 40% at 50% 100%, rgba(77,159,255,0.07) 0%, transparent 70%),
       radial-gradient(ellipse 40% 30% at 20% 80%, rgba(255,45,85,0.05) 0%, transparent 60%),
       radial-gradient(ellipse 40% 30% at 80% 80%, rgba(0,200,150,0.05) 0%, transparent 60%);
-    color: var(--text); font-family: 'Noto Sans HK', sans-serif; min-height: 100vh; overflow: hidden;
+    color: var(--text); font-family: 'Noto Sans HK', sans-serif; min-height:100vh; overflow:hidden;
   }
+  .ticker { background:var(--neon-red); color:#fff; font-family:'Share Tech Mono',monospace; font-size:11px; padding:4px 0; white-space:nowrap; overflow:hidden; letter-spacing:1px; }
+  .ticker-inner { display:inline-block; animation:ticker 30s linear infinite; }
+  @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
 
-  /* Ticker tape — red neon like HK signage */
-  .ticker {
-    background: var(--neon-red); color: #fff; font-family: 'Share Tech Mono', monospace; font-size: 11px; font-weight: 500;
-    padding: 4px 0; white-space: nowrap; overflow: hidden; letter-spacing: 1px;
-  }
-  .ticker-inner { display: inline-block; animation: ticker 30s linear infinite; }
-  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .shell { display:grid; grid-template-rows:auto 1fr auto; height:calc(100vh - 24px); }
+  header { display:flex; align-items:center; justify-content:space-between; padding:14px 28px; border-bottom:1px solid var(--border); background:linear-gradient(90deg,rgba(0,200,150,0.04),transparent,rgba(77,159,255,0.04)); }
+  .logo { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:4px; color:var(--jade); text-shadow:0 0 20px rgba(0,200,150,0.5); }
+  .logo span { color:var(--neon-red); text-shadow:0 0 20px rgba(255,45,85,0.5); }
+  .round-badge { font-family:'Share Tech Mono',monospace; font-size:12px; color:var(--muted); border:1px solid var(--border); padding:4px 12px; border-radius:2px; letter-spacing:1px; }
+  .players-badge { font-family:'Share Tech Mono',monospace; font-size:12px; color:var(--jade); letter-spacing:1px; }
 
-  /* Layout */
-  .shell { display: grid; grid-template-rows: auto 1fr auto; height: calc(100vh - 24px); }
-  header {
-    display: flex; align-items: center; justify-content: space-between; padding: 14px 28px;
-    border-bottom: 1px solid var(--border);
-    background: linear-gradient(90deg, rgba(0,200,150,0.04), transparent, rgba(77,159,255,0.04));
-  }
-  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 4px; color: var(--jade); text-shadow: 0 0 20px rgba(0,200,150,0.5); }
-  .logo span { color: var(--neon-red); text-shadow: 0 0 20px rgba(255,45,85,0.5); }
-  .round-badge { font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--muted); border: 1px solid var(--border); padding: 4px 12px; border-radius: 2px; letter-spacing: 1px; }
-  .players-badge { font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--jade); letter-spacing: 1px; }
-
-  main { display: grid; grid-template-columns: 1fr 300px; gap: 0; overflow: hidden; }
-
-  .content { padding: 28px; overflow-y: auto; border-right: 1px solid var(--border); }
+  main { display:grid; grid-template-columns:1fr 300px; overflow:hidden; }
+  .content { padding:24px 28px; overflow-y:auto; border-right:1px solid var(--border); }
 
   /* Lobby */
-  .lobby-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 24px; }
-  .lobby-title {
-    font-family: 'Bebas Neue', sans-serif; font-size: 100px; letter-spacing: 10px; line-height: 1; text-align: center;
-    color: var(--jade); text-shadow: 0 0 40px rgba(0,200,150,0.4), 0 0 80px rgba(0,200,150,0.15);
-  }
-  .lobby-hk { font-family: 'Noto Sans HK', sans-serif; font-size: 18px; color: var(--neon-red); letter-spacing: 6px; text-shadow: 0 0 12px rgba(255,45,85,0.6); }
-  .lobby-sub { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: var(--muted); text-align: center; letter-spacing: 2px; }
-  .join-url { font-family: 'Share Tech Mono', monospace; font-size: 18px; color: var(--gold); border: 1px solid rgba(240,165,0,0.4); padding: 10px 22px; border-radius: 2px; background: rgba(240,165,0,0.05); }
-  .pulse { animation: pulse 2s ease-in-out infinite; }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+  .lobby-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; gap:20px; }
+  .lobby-title { font-family:'Bebas Neue',sans-serif; font-size:100px; letter-spacing:10px; line-height:1; text-align:center; color:var(--jade); text-shadow:0 0 40px rgba(0,200,150,0.4); }
+  .lobby-hk { font-family:'Noto Sans HK',sans-serif; font-size:18px; color:var(--neon-red); letter-spacing:6px; text-shadow:0 0 12px rgba(255,45,85,0.6); }
+  .lobby-sub { font-family:'Share Tech Mono',monospace; font-size:13px; color:var(--muted); text-align:center; letter-spacing:2px; }
+  .join-url { font-family:'Share Tech Mono',monospace; font-size:18px; color:var(--gold); border:1px solid rgba(240,165,0,0.4); padding:10px 22px; border-radius:2px; background:rgba(240,165,0,0.05); }
+  .pulse { animation:pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
 
   /* News */
-  .news-header { font-family: 'Bebas Neue', sans-serif; font-size: 46px; color: var(--text); margin-bottom: 6px; line-height: 1.1; }
-  .news-label { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--gold); letter-spacing: 3px; margin-bottom: 16px; }
-  .news-body { font-size: 17px; line-height: 1.75; color: #8fa0c0; background: var(--surface); border-left: 3px solid var(--gold); padding: 18px 22px; border-radius: 0 6px 6px 0; margin-bottom: 24px; }
-  .markets-row { display: flex; gap: 10px; flex-wrap: wrap; }
-  .market-chip { font-family: 'Share Tech Mono', monospace; font-size: 12px; background: var(--surface); border: 1px solid var(--border); padding: 7px 14px; border-radius: 2px; color: var(--harbour); letter-spacing: 1px; }
+  .news-header { font-family:'Bebas Neue',sans-serif; font-size:44px; color:var(--text); margin-bottom:6px; line-height:1.1; }
+  .news-label { font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--gold); letter-spacing:3px; margin-bottom:14px; }
+  .news-body { font-size:17px; line-height:1.75; color:#8fa0c0; background:var(--surface); border-left:3px solid var(--gold); padding:18px 22px; border-radius:0 6px 6px 0; margin-bottom:20px; }
+  .markets-row { display:flex; gap:10px; flex-wrap:wrap; }
+  .market-chip { font-family:'Share Tech Mono',monospace; font-size:12px; background:var(--surface); border:1px solid var(--border); padding:7px 14px; border-radius:2px; color:var(--harbour); letter-spacing:1px; }
 
   /* Voting */
-  .vote-timer { font-family: 'Bebas Neue', sans-serif; font-size: 80px; color: var(--jade); text-align: center; margin: 16px 0; text-shadow: 0 0 30px rgba(0,200,150,0.4); }
-  .vote-timer.urgent { color: var(--neon-red); text-shadow: 0 0 30px rgba(255,45,85,0.6); animation: blink 0.5s step-end infinite; }
-  @keyframes blink { 50% { opacity: 0.3; } }
-  .vote-count { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: var(--muted); text-align: center; letter-spacing: 1px; }
+  .vote-timer { font-family:'Bebas Neue',sans-serif; font-size:80px; color:var(--jade); text-align:center; margin:12px 0; text-shadow:0 0 30px rgba(0,200,150,0.4); }
+  .vote-timer.urgent { color:var(--neon-red); text-shadow:0 0 30px rgba(255,45,85,0.6); animation:blink 0.5s step-end infinite; }
+  @keyframes blink { 50%{opacity:0.3} }
+  .vote-count { font-family:'Share Tech Mono',monospace; font-size:13px; color:var(--muted); text-align:center; letter-spacing:1px; }
 
   /* Reveal */
-  .reveal-section { margin-top: 20px; }
-  .market-results { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .market-card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 16px; transition: all 0.3s; }
-  .market-name { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--muted); margin-bottom: 6px; letter-spacing: 1px; }
-  .market-move { font-family: 'Bebas Neue', sans-serif; font-size: 38px; }
-  .market-card.positive { border-color: rgba(0,200,150,0.5); background: rgba(0,200,150,0.05); }
-  .market-card.positive .market-move { color: var(--jade); text-shadow: 0 0 16px rgba(0,200,150,0.4); }
-  .market-card.negative { border-color: rgba(255,45,85,0.5); background: rgba(255,45,85,0.05); }
-  .market-card.negative .market-move { color: var(--neon-red); text-shadow: 0 0 16px rgba(255,45,85,0.4); }
-  .analysis-box { background: var(--surface); border: 1px solid rgba(77,159,255,0.3); border-radius: 6px; padding: 18px; margin-top: 14px; font-size: 14px; line-height: 1.75; color: #8fa0c0; }
-  .analysis-box strong { color: var(--harbour); font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 2px; display: block; margin-bottom: 10px; }
+  .market-results { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+  .market-card { background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:16px; }
+  .market-name { font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--muted); margin-bottom:6px; letter-spacing:1px; }
+  .market-move { font-family:'Bebas Neue',sans-serif; font-size:38px; transition:all 0.1s; }
+  .market-card.positive { border-color:rgba(0,200,150,0.5); background:rgba(0,200,150,0.05); }
+  .market-card.positive .market-move { color:var(--jade); text-shadow:0 0 16px rgba(0,200,150,0.4); }
+  .market-card.negative { border-color:rgba(255,45,85,0.5); background:rgba(255,45,85,0.05); }
+  .market-card.negative .market-move { color:var(--neon-red); text-shadow:0 0 16px rgba(255,45,85,0.4); }
+
+  /* Vote bar chart */
+  .tally-section { margin-top:16px; }
+  .tally-label { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:2px; margin-bottom:10px; }
+  .tally-row { margin-bottom:10px; }
+  .tally-market { font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--harbour); margin-bottom:4px; }
+  .tally-bars { display:flex; gap:3px; height:20px; border-radius:3px; overflow:hidden; }
+  .tally-bar-long { background:rgba(0,200,150,0.7); display:flex; align-items:center; justify-content:center; font-family:'Share Tech Mono',monospace; font-size:10px; color:#000; font-weight:700; transition:width 0.8s ease; min-width:0; }
+  .tally-bar-short { background:rgba(255,45,85,0.7); display:flex; align-items:center; justify-content:center; font-family:'Share Tech Mono',monospace; font-size:10px; color:#fff; font-weight:700; transition:width 0.8s ease; min-width:0; }
+  .tally-bar-skip { background:rgba(74,85,112,0.4); display:flex; align-items:center; justify-content:center; font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--muted); transition:width 0.8s ease; min-width:0; }
+
+  .analysis-box { background:var(--surface); border:1px solid rgba(77,159,255,0.3); border-radius:6px; padding:18px; margin-top:14px; font-size:14px; line-height:1.75; color:#8fa0c0; }
+  .analysis-box strong { color:var(--harbour); font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:2px; display:block; margin-bottom:10px; }
 
   /* Leaderboard */
-  .sidebar { padding: 18px; overflow-y: auto; background: rgba(13,17,32,0.5); }
-  .sidebar-title { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 3px; color: var(--muted); margin-bottom: 14px; }
-  .lb-row { display: flex; align-items: center; gap: 10px; padding: 9px 11px; border-radius: 4px; margin-bottom: 5px; background: var(--surface); border: 1px solid var(--border); transition: all 0.4s; }
-  .lb-row:first-child { border-color: rgba(240,165,0,0.5); background: rgba(240,165,0,0.05); }
-  .lb-rank { font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--muted); width: 22px; }
-  .lb-row:first-child .lb-rank { color: var(--gold); }
-  .lb-name { font-size: 13px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .lb-capital { font-family: 'Share Tech Mono', monospace; font-size: 12px; }
-  .lb-capital.up { color: var(--jade); }
-  .lb-capital.down { color: var(--neon-red); }
+  .sidebar { padding:18px; overflow-y:auto; background:rgba(13,17,32,0.5); }
+  .sidebar-title { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:3px; color:var(--muted); margin-bottom:14px; }
+  .lb-row { display:flex; align-items:center; gap:10px; padding:9px 11px; border-radius:4px; margin-bottom:5px; background:var(--surface); border:1px solid var(--border); transition:all 0.4s; }
+  .lb-row:first-child { border-color:rgba(240,165,0,0.5); background:rgba(240,165,0,0.05); }
+  .lb-rank { font-family:'Bebas Neue',sans-serif; font-size:18px; color:var(--muted); width:22px; }
+  .lb-row:first-child .lb-rank { color:var(--gold); }
+  .lb-name { font-size:13px; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .lb-capital { font-family:'Share Tech Mono',monospace; font-size:12px; }
+  .lb-capital.up { color:var(--jade); }
+  .lb-capital.down { color:var(--neon-red); }
 
-  /* Footer controls */
-  footer { padding: 14px 28px; border-top: 1px solid var(--border); display: flex; gap: 10px; align-items: center; background: rgba(6,8,15,0.8); }
-  .btn { font-family: 'Share Tech Mono', monospace; font-size: 12px; letter-spacing: 1px; padding: 10px 22px; border: none; border-radius: 3px; cursor: pointer; transition: all 0.2s; }
-  .btn-primary { background: var(--jade); color: #000; font-weight: 700; }
-  .btn-primary:hover { background: #00ffb8; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,200,150,0.3); }
-  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
-  .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
-  .btn:disabled { opacity: 0.25; cursor: not-allowed; transform: none; }
-  .phase-label { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 2px; margin-left: auto; }
+  /* Footer */
+  footer { padding:14px 28px; border-top:1px solid var(--border); display:flex; gap:10px; align-items:center; background:rgba(6,8,15,0.8); }
+  .btn { font-family:'Share Tech Mono',monospace; font-size:12px; letter-spacing:1px; padding:10px 20px; border:none; border-radius:3px; cursor:pointer; transition:all 0.2s; }
+  .btn-primary { background:var(--jade); color:#000; font-weight:700; }
+  .btn-primary:hover { background:#00ffb8; transform:translateY(-1px); box-shadow:0 4px 16px rgba(0,200,150,0.3); }
+  .btn-ghost { background:transparent; color:var(--muted); border:1px solid var(--border); }
+  .btn-ghost:hover { color:var(--text); border-color:var(--muted); }
+  .btn:disabled { opacity:0.25; cursor:not-allowed; transform:none; }
+  .phase-label { font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:2px; margin-left:auto; }
+  .hidden { display:none !important; }
 
-  .hidden { display: none !important; }
+  /* End podium */
+  .end-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; gap:16px; }
+  .end-title { font-family:'Bebas Neue',sans-serif; font-size:64px; color:var(--gold); letter-spacing:6px; text-shadow:0 0 30px rgba(240,165,0,0.4); }
 
-  /* End */
-  .end-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 16px; }
-  .end-title { font-family: 'Bebas Neue', sans-serif; font-size: 72px; color: var(--gold); letter-spacing: 6px; text-shadow: 0 0 30px rgba(240,165,0,0.4); }
-  .end-sub { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: var(--muted); letter-spacing: 2px; }
-  .winner-name { font-family: 'Bebas Neue', sans-serif; font-size: 52px; color: var(--jade); text-shadow: 0 0 24px rgba(0,200,150,0.5); }
-
-  /* HK skyline decorative strip */
-  .skyline { position: fixed; bottom: 48px; left: 0; right: 0; height: 60px; pointer-events: none; opacity: 0.06; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 60'%3E%3Crect x='0' y='20' width='8' height='40' fill='%23fff'/%3E%3Crect x='10' y='10' width='12' height='50' fill='%23fff'/%3E%3Crect x='24' y='5' width='6' height='55' fill='%23fff'/%3E%3Crect x='32' y='15' width='20' height='45' fill='%23fff'/%3E%3Crect x='54' y='0' width='10' height='60' fill='%23fff'/%3E%3Crect x='66' y='20' width='8' height='40' fill='%23fff'/%3E%3Crect x='76' y='8' width='14' height='52' fill='%23fff'/%3E%3Crect x='92' y='12' width='10' height='48' fill='%23fff'/%3E%3Crect x='104' y='4' width='8' height='56' fill='%23fff'/%3E%3Crect x='114' y='18' width='16' height='42' fill='%23fff'/%3E%3Crect x='132' y='2' width='6' height='58' fill='%23fff'/%3E%3Crect x='140' y='14' width='12' height='46' fill='%23fff'/%3E%3Crect x='154' y='22' width='8' height='38' fill='%23fff'/%3E%3Crect x='164' y='6' width='18' height='54' fill='%23fff'/%3E%3Crect x='184' y='16' width='10' height='44' fill='%23fff'/%3E%3Crect x='196' y='0' width='8' height='60' fill='%23fff'/%3E%3Crect x='206' y='10' width='14' height='50' fill='%23fff'/%3E%3Crect x='222' y='20' width='10' height='40' fill='%23fff'/%3E%3Crect x='234' y='4' width='6' height='56' fill='%23fff'/%3E%3Crect x='242' y='12' width='20' height='48' fill='%23fff'/%3E%3C/svg%3E") repeat-x bottom; z-index: 0; }
-  .scanline { position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px); z-index: 9999; }
+  /* Confetti */
+  .confetti-piece { position:fixed; width:10px; height:10px; top:-10px; opacity:0; animation:confettiFall linear forwards; pointer-events:none; z-index:9998; border-radius:2px; }
+  @keyframes confettiFall {
+    0% { transform:translateY(0) rotate(0deg); opacity:1; }
+    100% { transform:translateY(100vh) rotate(720deg); opacity:0; }
+  }
+  .skyline { position:fixed; bottom:48px; left:0; right:0; height:60px; pointer-events:none; opacity:0.06;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 60'%3E%3Crect x='0' y='20' width='8' height='40' fill='%23fff'/%3E%3Crect x='10' y='10' width='12' height='50' fill='%23fff'/%3E%3Crect x='24' y='5' width='6' height='55' fill='%23fff'/%3E%3Crect x='32' y='15' width='20' height='45' fill='%23fff'/%3E%3Crect x='54' y='0' width='10' height='60' fill='%23fff'/%3E%3Crect x='66' y='20' width='8' height='40' fill='%23fff'/%3E%3Crect x='76' y='8' width='14' height='52' fill='%23fff'/%3E%3Crect x='92' y='12' width='10' height='48' fill='%23fff'/%3E%3Crect x='104' y='4' width='8' height='56' fill='%23fff'/%3E%3Crect x='114' y='18' width='16' height='42' fill='%23fff'/%3E%3Crect x='132' y='2' width='6' height='58' fill='%23fff'/%3E%3Crect x='140' y='14' width='12' height='46' fill='%23fff'/%3E%3Crect x='154' y='22' width='8' height='38' fill='%23fff'/%3E%3Crect x='164' y='6' width='18' height='54' fill='%23fff'/%3E%3Crect x='184' y='16' width='10' height='44' fill='%23fff'/%3E%3Crect x='196' y='0' width='8' height='60' fill='%23fff'/%3E%3Crect x='206' y='10' width='14' height='50' fill='%23fff'/%3E%3Crect x='222' y='20' width='10' height='40' fill='%23fff'/%3E%3Crect x='234' y='4' width='6' height='56' fill='%23fff'/%3E%3Crect x='242' y='12' width='20' height='48' fill='%23fff'/%3E%3C/svg%3E") repeat-x bottom; }
+  .scanline { position:fixed; top:0; left:0; right:0; bottom:0; pointer-events:none; background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.04) 3px,rgba(0,0,0,0.04) 4px); z-index:9999; }
 </style>
 </head>
 <body>
@@ -137,24 +127,19 @@
     市場通話 MARKET CALL LIVE &nbsp;◆&nbsp; 買賣 LONG OR SHORT? &nbsp;◆&nbsp; 香港金融市場 HK FINANCIAL MARKETS &nbsp;◆&nbsp; BUY THE DIP OR SELL THE RALLY? &nbsp;◆&nbsp; 基本面分析 FUNDAMENTALS MATTER &nbsp;◆&nbsp;
   </span>
 </div>
-
 <div class="shell">
   <header>
     <div class="logo">Market <span>Call</span></div>
     <div class="players-badge" id="playerCount">0 PLAYERS CONNECTED</div>
     <div class="round-badge" id="roundBadge">LOBBY</div>
   </header>
-
   <main>
-    <div class="content" id="mainContent">
-      <!-- Injected by JS -->
-    </div>
+    <div class="content" id="mainContent"></div>
     <div class="sidebar">
       <div class="sidebar-title">Leaderboard</div>
       <div id="leaderboard"></div>
     </div>
   </main>
-
   <footer>
     <button class="btn btn-primary hidden" id="btnStartRound" onclick="hostAction('hostStartRound')">START GAME</button>
     <button class="btn btn-primary hidden" id="btnOpenVoting" onclick="hostAction('hostOpenVoting')">OPEN VOTING (60s)</button>
@@ -167,11 +152,116 @@
 
 <script>
 const socket = io();
-socket.on('connect', () => {
-  socket.emit('hostJoin');
-});
+socket.on('connect', () => { socket.emit('hostJoin'); });
 
 let timerInterval = null;
+
+// ── Sound effects using Web Audio API ──────────────────────────────────────
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+function getAudio() { if (!audioCtx) audioCtx = new AudioContext(); return audioCtx; }
+
+function playTradingBuzz() {
+  try {
+    const ctx = getAudio();
+    // Layered trading floor ambience
+    for (let i = 0; i < 8; i++) {
+      setTimeout(() => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.frequency.value = 200 + Math.random() * 300;
+        osc.type = 'sine';
+        gain.gain.setValueAtTime(0.02, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+        osc.start(); osc.stop(ctx.currentTime + 0.3);
+      }, i * 80);
+    }
+  } catch(e) {}
+}
+
+function playBell() {
+  try {
+    const ctx = getAudio();
+    const freqs = [880, 1108, 1318, 1760];
+    freqs.forEach((freq, i) => {
+      setTimeout(() => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.frequency.value = freq;
+        osc.type = 'sine';
+        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5);
+        osc.start(); osc.stop(ctx.currentTime + 1.5);
+      }, i * 60);
+    });
+  } catch(e) {}
+}
+
+function playRevealDrum() {
+  try {
+    const ctx = getAudio();
+    // Dramatic drum roll then hit
+    for (let i = 0; i < 10; i++) {
+      setTimeout(() => {
+        const buf = ctx.createBuffer(1, ctx.sampleRate * 0.05, ctx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let j = 0; j < data.length; j++) data[j] = (Math.random() * 2 - 1) * (1 - j / data.length);
+        const src = ctx.createBufferSource();
+        const gain = ctx.createGain();
+        src.buffer = buf; src.connect(gain); gain.connect(ctx.destination);
+        gain.gain.value = 0.3 + (i / 10) * 0.4;
+        src.start();
+      }, i * 60);
+    }
+    setTimeout(() => {
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 0.2, ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let j = 0; j < data.length; j++) data[j] = (Math.random() * 2 - 1) * Math.exp(-j / (ctx.sampleRate * 0.05));
+      const src = ctx.createBufferSource();
+      const gain = ctx.createGain();
+      src.buffer = buf; src.connect(gain); gain.connect(ctx.destination);
+      gain.gain.value = 0.8;
+      src.start();
+    }, 620);
+  } catch(e) {}
+}
+
+// ── Confetti ────────────────────────────────────────────────────────────────
+function launchConfetti() {
+  const colors = ['#00c896','#ff2d55','#f0a500','#4d9fff','#9b5de5','#ffffff'];
+  for (let i = 0; i < 120; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.background = colors[Math.floor(Math.random() * colors.length)];
+      el.style.width = (6 + Math.random() * 8) + 'px';
+      el.style.height = (6 + Math.random() * 8) + 'px';
+      el.style.animationDuration = (2 + Math.random() * 3) + 's';
+      el.style.animationDelay = (Math.random() * 0.5) + 's';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 4000);
+    }, i * 20);
+  }
+}
+
+// ── Animated counter ────────────────────────────────────────────────────────
+function animateCounter(el, target, duration = 1500) {
+  const start = Date.now();
+  const sign = target >= 0 ? '+' : '';
+  const tick = () => {
+    const elapsed = Date.now() - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = target * eased;
+    el.textContent = sign + current.toFixed(1) + '%';
+    if (progress < 1) requestAnimationFrame(tick);
+    else el.textContent = sign + target + '%';
+  };
+  requestAnimationFrame(tick);
+}
 
 function hostAction(action) { socket.emit(action); }
 
@@ -209,14 +299,17 @@ function updateContent(state) {
         <div class="join-url pulse">📱 ${location.host}/player.html</div>
         <div class="lobby-sub" style="color:var(--harbour)">Waiting for host to start...</div>
       </div>`;
+
   } else if (state.phase === 'news' && state.round) {
     el.innerHTML = `
       <div class="news-label">📰 BREAKING NEWS — ROUND ${state.round.id}</div>
       <div class="news-header">${state.round.title}</div>
       <div class="news-body">${state.round.news}</div>
-      <div class="news-label" style="margin-top:24px">MARKETS IN PLAY</div>
+      <div class="news-label" style="margin-top:20px">MARKETS IN PLAY</div>
       <div class="markets-row">${state.round.markets.map(m => `<div class="market-chip">${m}</div>`).join('')}</div>`;
+
   } else if (state.phase === 'voting' && state.round) {
+    playTradingBuzz();
     el.innerHTML = `
       <div class="news-label">⏱ VOTING OPEN — PLACE YOUR TRADES</div>
       <div class="news-header">${state.round.title}</div>
@@ -224,7 +317,9 @@ function updateContent(state) {
       <div class="vote-timer" id="timerDisplay">60</div>
       <div class="vote-count" id="voteCountDisplay">0 votes received</div>`;
     startTimer(state.timerEnd);
+
   } else if (state.phase === 'reveal' && state.round) {
+    playRevealDrum();
     const mKeys = Object.keys(state.round.movements);
     el.innerHTML = `
       <div class="news-label">📊 PRICE REVEAL — ROUND ${state.round.id}</div>
@@ -233,48 +328,52 @@ function updateContent(state) {
         ${mKeys.map(m => {
           const mv = state.round.movements[m];
           const cls = mv >= 0 ? 'positive' : 'negative';
-          const sign = mv >= 0 ? '+' : '';
-          return `<div class="market-card ${cls}"><div class="market-name">${m}</div><div class="market-move">${sign}${mv}%</div></div>`;
+          return `<div class="market-card ${cls}"><div class="market-name">${m}</div><div class="market-move" id="move-${m.replace(/[^a-z0-9]/gi,'_')}">0.0%</div></div>`;
         }).join('')}
       </div>
-      <div class="reveal-section">
-        <div class="analysis-box"><strong>FUNDAMENTAL ANALYSIS</strong>${state.round.analysis}</div>
-      </div>`;
+      ${state.round.voteTally ? renderTally(state.round.voteTally) : ''}
+      <div class="analysis-box"><strong>FUNDAMENTAL ANALYSIS</strong>${state.round.analysis}</div>`;
+    // Animate counters after DOM ready
+    setTimeout(() => {
+      mKeys.forEach(m => {
+        const el2 = document.getElementById('move-' + m.replace(/[^a-z0-9]/gi,'_'));
+        if (el2) animateCounter(el2, state.round.movements[m]);
+      });
+    }, 100);
+
   } else if (state.phase === 'end') {
+    launchConfetti();
+    playBell();
     const lb = state.leaderboard;
-    const medals = ['🥇', '🥈', '🥉'];
-    const podiumColors = ['var(--gold)', '#b0bec5', '#cd7f32'];
-    const podiumGlow = ['rgba(240,165,0,0.4)', 'rgba(176,190,197,0.3)', 'rgba(205,127,50,0.3)'];
+    const medals = ['🥇','🥈','🥉'];
+    const podiumColors = ['var(--gold)','#b0bec5','#cd7f32'];
     el.innerHTML = `
       <div class="end-screen">
         <div class="end-title">🏆 FINAL RESULTS</div>
-        <div class="lobby-hk" style="margin-bottom:24px">恭喜 CONGRATULATIONS</div>
-        <div style="display:flex;align-items:flex-end;gap:16px;margin-bottom:32px;justify-content:center">
-          ${[1, 0, 2].map(i => {
-            const p = lb[i];
-            if (!p) return '';
+        <div class="lobby-hk" style="margin-bottom:20px">恭喜 CONGRATULATIONS</div>
+        <div style="display:flex;align-items:flex-end;gap:16px;margin-bottom:28px;justify-content:center">
+          ${[1,0,2].map(i => {
+            const p = lb[i]; if (!p) return '';
             const diff = p.capital - 10000;
             const sign = diff >= 0 ? '+' : '';
-            const heights = ['120px', '160px', '90px'];
-            const order = [1, 0, 2];
-            return `
-              <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
-                <div style="font-size:32px">${medals[i]}</div>
-                <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:${podiumColors[i]};text-shadow:0 0 16px ${podiumGlow[i]};max-width:120px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</div>
-                <div style="font-family:'Share Tech Mono',monospace;font-size:13px;color:${podiumColors[i]}">${sign}$${Math.abs(diff).toLocaleString()}</div>
-                <div style="width:110px;height:${heights[order.indexOf(i)]};background:linear-gradient(180deg,${podiumColors[i]}22,${podiumColors[i]}11);border:1px solid ${podiumColors[i]}55;border-bottom:none;display:flex;align-items:center;justify-content:center;border-radius:4px 4px 0 0">
-                  <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:${podiumColors[i]}">${i + 1}</div>
-                </div>
-              </div>`;
+            const heights = ['120px','160px','90px'];
+            const order = [1,0,2];
+            return `<div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+              <div style="font-size:32px">${medals[i]}</div>
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:${podiumColors[i]};text-shadow:0 0 16px ${podiumColors[i]}66;max-width:120px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:13px;color:${podiumColors[i]}">${sign}$${Math.abs(diff).toLocaleString()}</div>
+              <div style="width:110px;height:${heights[order.indexOf(i)]};background:linear-gradient(180deg,${podiumColors[i]}22,${podiumColors[i]}11);border:1px solid ${podiumColors[i]}55;border-bottom:none;display:flex;align-items:center;justify-content:center;border-radius:4px 4px 0 0">
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:${podiumColors[i]}">${i+1}</div>
+              </div>
+            </div>`;
           }).join('')}
         </div>
         <div style="width:100%;max-width:420px">
-          ${lb.slice(3).map((p, i) => {
-            const diff = p.capital - 10000;
-            const sign = diff >= 0 ? '+' : '';
+          ${lb.slice(3).map((p,i) => {
+            const diff = p.capital - 10000; const sign = diff >= 0 ? '+' : '';
             const col = diff >= 0 ? 'var(--jade)' : 'var(--neon-red)';
             return `<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--border);font-family:'Share Tech Mono',monospace;font-size:12px">
-              <span style="color:var(--muted);width:20px">${i + 4}</span>
+              <span style="color:var(--muted);width:20px">${i+4}</span>
               <span style="flex:1;color:var(--text)">${p.name}</span>
               <span style="color:${col}">${sign}$${Math.abs(diff).toLocaleString()}</span>
             </div>`;
@@ -284,28 +383,48 @@ function updateContent(state) {
   }
 }
 
+function renderTally(tally) {
+  const rows = Object.entries(tally).map(([market, counts]) => {
+    const total = counts.long + counts.short + counts.skip || 1;
+    const lp = Math.round((counts.long / total) * 100);
+    const sp = Math.round((counts.short / total) * 100);
+    const skp = 100 - lp - sp;
+    return `<div class="tally-row">
+      <div class="tally-market">${market}</div>
+      <div class="tally-bars">
+        <div class="tally-bar-long" style="width:${lp}%">${lp > 8 ? lp+'%' : ''}</div>
+        <div class="tally-bar-short" style="width:${sp}%">${sp > 8 ? sp+'%' : ''}</div>
+        <div class="tally-bar-skip" style="width:${skp}%">${skp > 8 ? skp+'%' : ''}</div>
+      </div>
+    </div>`;
+  }).join('');
+  return `<div class="tally-section">
+    <div class="tally-label">CLASS VOTE — <span style="color:var(--jade)">■ LONG</span> &nbsp;<span style="color:var(--neon-red)">■ SHORT</span> &nbsp;<span style="color:var(--muted)">■ SKIP</span></div>
+    ${rows}
+  </div>`;
+}
+
 function startTimer(endTime) {
   if (!endTime) return;
+  let bellPlayed = false;
   timerInterval = setInterval(() => {
     const remaining = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
     const el = document.getElementById('timerDisplay');
-    if (el) {
-      el.textContent = remaining;
-      el.classList.toggle('urgent', remaining <= 10);
-    }
+    if (el) { el.textContent = remaining; el.classList.toggle('urgent', remaining <= 10); }
+    if (remaining <= 10 && !bellPlayed) { bellPlayed = true; playBell(); }
     if (remaining <= 0) clearInterval(timerInterval);
   }, 200);
 }
 
 function updateLeaderboard(lb) {
   const el = document.getElementById('leaderboard');
-  if (!lb || lb.length === 0) { el.innerHTML = '<div style="color:var(--muted);font-size:13px;font-family:DM Mono">No players yet</div>'; return; }
-  el.innerHTML = lb.map((p, i) => {
+  if (!lb || lb.length === 0) { el.innerHTML = '<div style="color:var(--muted);font-size:13px;font-family:Share Tech Mono">No players yet</div>'; return; }
+  el.innerHTML = lb.map((p,i) => {
     const diff = p.capital - 10000;
     const cls = diff >= 0 ? 'up' : 'down';
     const sign = diff >= 0 ? '+' : '';
     return `<div class="lb-row">
-      <span class="lb-rank">${i + 1}</span>
+      <span class="lb-rank">${i+1}</span>
       <span class="lb-name">${p.name}</span>
       <span class="lb-capital ${cls}">$${p.capital.toLocaleString()}</span>
     </div>`;
@@ -316,7 +435,6 @@ function updateButtons(state) {
   const show = id => document.getElementById(id).classList.remove('hidden');
   const hide = id => document.getElementById(id).classList.add('hidden');
   ['btnStartRound','btnOpenVoting','btnReveal','btnNext','btnReset'].forEach(hide);
-
   if (state.phase === 'lobby') { show('btnStartRound'); }
   else if (state.phase === 'news') { show('btnOpenVoting'); show('btnReset'); }
   else if (state.phase === 'voting') { show('btnReveal'); show('btnReset'); }
