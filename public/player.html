@@ -9,107 +9,89 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Noto+Sans+HK:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #06080f;
-    --surface: #0d1120;
-    --border: #1a2240;
-    --jade: #00c896;
-    --neon-red: #ff2d55;
-    --gold: #f0a500;
-    --harbour: #4d9fff;
-    --text: #dde4f0;
-    --muted: #4a5570;
+    --bg:#06080f; --surface:#0d1120; --border:#1a2240;
+    --jade:#00c896; --neon-red:#ff2d55; --gold:#f0a500;
+    --harbour:#4d9fff; --text:#dde4f0; --muted:#4a5570;
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body {
-    background: var(--bg);
-    background-image: radial-gradient(ellipse 80% 50% at 50% 100%, rgba(77,159,255,0.06) 0%, transparent 70%);
-    color: var(--text); font-family: 'Noto Sans HK', sans-serif; min-height: 100vh; overscroll-behavior: none;
-  }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { background:var(--bg); background-image:radial-gradient(ellipse 80% 50% at 50% 100%,rgba(77,159,255,0.06) 0%,transparent 70%); color:var(--text); font-family:'Noto Sans HK',sans-serif; min-height:100vh; overscroll-behavior:none; }
 
-  .screen { display: none; padding: 24px 20px; min-height: 100vh; }
-  .screen.active { display: block; }
+  .screen { display:none; padding:24px 20px; min-height:100vh; }
+  .screen.active { display:block; }
 
-  /* Join */
-  .join-logo { font-family: 'Bebas Neue', sans-serif; font-size: 52px; color: var(--jade); letter-spacing: 4px; margin-bottom: 2px; text-shadow: 0 0 20px rgba(0,200,150,0.4); }
-  .join-logo span { color: var(--neon-red); text-shadow: 0 0 20px rgba(255,45,85,0.4); }
-  .join-hk { font-family: 'Noto Sans HK', sans-serif; font-size: 13px; color: var(--neon-red); letter-spacing: 4px; margin-bottom: 32px; opacity: 0.8; }
-  .input-group { margin-bottom: 16px; }
-  .input-label { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 2px; margin-bottom: 8px; display: block; }
-  input[type=text] {
-    width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text);
-    font-family: 'Noto Sans HK', sans-serif; font-size: 16px; padding: 14px 16px; border-radius: 4px;
-    outline: none; transition: border-color 0.2s;
-  }
-  input[type=text]:focus { border-color: var(--jade); box-shadow: 0 0 0 2px rgba(0,200,150,0.1); }
-  .btn-full {
-    width: 100%; background: var(--jade); color: #000; font-family: 'Share Tech Mono', monospace;
-    font-size: 14px; font-weight: 700; letter-spacing: 2px; padding: 16px; border: none; border-radius: 4px;
-    cursor: pointer; margin-top: 8px; transition: all 0.2s;
-  }
-  .btn-full:active { transform: scale(0.98); }
-  .btn-full:disabled { opacity: 0.3; }
+  .join-logo { font-family:'Bebas Neue',sans-serif; font-size:52px; color:var(--jade); letter-spacing:4px; margin-bottom:2px; text-shadow:0 0 20px rgba(0,200,150,0.4); }
+  .join-logo span { color:var(--neon-red); text-shadow:0 0 20px rgba(255,45,85,0.4); }
+  .join-hk { font-family:'Noto Sans HK',sans-serif; font-size:13px; color:var(--neon-red); letter-spacing:4px; margin-bottom:32px; opacity:0.8; }
+  .input-group { margin-bottom:16px; }
+  .input-label { font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:2px; margin-bottom:8px; display:block; }
+  input[type=text] { width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text); font-family:'Noto Sans HK',sans-serif; font-size:16px; padding:14px 16px; border-radius:4px; outline:none; transition:border-color 0.2s; }
+  input[type=text]:focus { border-color:var(--jade); box-shadow:0 0 0 2px rgba(0,200,150,0.1); }
+  .btn-full { width:100%; background:var(--jade); color:#000; font-family:'Share Tech Mono',monospace; font-size:14px; font-weight:700; letter-spacing:2px; padding:16px; border:none; border-radius:4px; cursor:pointer; margin-top:8px; transition:all 0.2s; }
+  .btn-full:active { transform:scale(0.98); }
+  .btn-full:disabled { opacity:0.3; }
 
-  /* Status bar */
-  .status-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-  .player-name { font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--muted); letter-spacing: 1px; }
-  .capital-display { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: var(--jade); text-shadow: 0 0 16px rgba(0,200,150,0.3); }
-  .capital-label { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 1px; }
+  .status-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+  .player-name { font-family:'Share Tech Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:1px; }
+  .capital-display { font-family:'Bebas Neue',sans-serif; font-size:36px; color:var(--jade); text-shadow:0 0 16px rgba(0,200,150,0.3); }
+  .capital-label { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:1px; }
 
-  /* Wait */
-  .wait-box { text-align: center; padding: 48px 20px; }
-  .wait-title { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--muted); margin-bottom: 16px; letter-spacing: 2px; }
-  .wait-dot { display: inline-block; width: 8px; height: 8px; background: var(--jade); border-radius: 50%; margin: 0 3px; animation: bounce 1.2s ease-in-out infinite; }
-  .wait-dot:nth-child(2) { animation-delay: 0.2s; }
-  .wait-dot:nth-child(3) { animation-delay: 0.4s; }
+  .wait-box { text-align:center; padding:48px 20px; }
+  .wait-title { font-family:'Bebas Neue',sans-serif; font-size:32px; color:var(--muted); margin-bottom:16px; letter-spacing:2px; }
+  .wait-dot { display:inline-block; width:8px; height:8px; background:var(--jade); border-radius:50%; margin:0 3px; animation:bounce 1.2s ease-in-out infinite; }
+  .wait-dot:nth-child(2) { animation-delay:0.2s; }
+  .wait-dot:nth-child(3) { animation-delay:0.4s; }
   @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
 
-  /* Voting */
-  .round-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: var(--text); margin-bottom: 4px; }
-  .timer-bar-wrap { background: var(--surface); border-radius: 2px; height: 5px; margin: 10px 0 18px; overflow: hidden; }
-  .timer-bar { height: 100%; background: var(--jade); border-radius: 2px; transition: width 1s linear, background 0.3s; }
-  .timer-bar.urgent { background: var(--neon-red); }
+  .round-title { font-family:'Bebas Neue',sans-serif; font-size:24px; color:var(--text); margin-bottom:4px; }
+  .timer-bar-wrap { background:var(--surface); border-radius:2px; height:5px; margin:10px 0 18px; overflow:hidden; }
+  .timer-bar { height:100%; background:var(--jade); border-radius:2px; transition:width 1s linear,background 0.3s; }
+  .timer-bar.urgent { background:var(--neon-red); }
 
-  .market-section { margin-bottom: 18px; }
-  .market-label { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--harbour); letter-spacing: 2px; margin-bottom: 8px; }
-  .direction-btns { display: flex; gap: 8px; margin-bottom: 8px; }
-  .dir-btn {
-    flex: 1; padding: 11px 6px; border-radius: 4px; font-family: 'Share Tech Mono', monospace; font-size: 13px;
-    border: 1px solid var(--border); background: var(--surface); color: var(--muted); cursor: pointer; transition: all 0.15s; text-align: center;
-  }
-  .dir-btn.long-btn.selected { background: rgba(0,200,150,0.12); border-color: var(--jade); color: var(--jade); box-shadow: 0 0 12px rgba(0,200,150,0.15); }
-  .dir-btn.short-btn.selected { background: rgba(255,45,85,0.12); border-color: var(--neon-red); color: var(--neon-red); box-shadow: 0 0 12px rgba(255,45,85,0.15); }
-  .dir-btn.skip-btn.selected { background: rgba(74,85,112,0.2); border-color: var(--muted); color: var(--muted); }
+  .market-section { margin-bottom:16px; }
+  .market-label { font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--harbour); letter-spacing:2px; margin-bottom:6px; }
+  .direction-btns { display:flex; gap:6px; margin-bottom:6px; }
+  .dir-btn { flex:1; padding:10px 4px; border-radius:4px; font-family:'Share Tech Mono',monospace; font-size:13px; border:1px solid var(--border); background:var(--surface); color:var(--muted); cursor:pointer; transition:all 0.15s; text-align:center; }
+  .dir-btn.long-btn.selected { background:rgba(0,200,150,0.12); border-color:var(--jade); color:var(--jade); box-shadow:0 0 12px rgba(0,200,150,0.15); }
+  .dir-btn.short-btn.selected { background:rgba(255,45,85,0.12); border-color:var(--neon-red); color:var(--neon-red); box-shadow:0 0 12px rgba(255,45,85,0.15); }
+  .dir-btn.skip-btn.selected { background:rgba(74,85,112,0.2); border-color:var(--muted); color:var(--muted); }
 
-  .amount-row { display: flex; gap: 6px; flex-wrap: wrap; }
-  .amt-btn {
-    flex: 1; min-width: 58px; padding: 8px 4px; border-radius: 3px; font-family: 'Share Tech Mono', monospace; font-size: 11px;
-    border: 1px solid var(--border); background: var(--surface); color: var(--muted); cursor: pointer; transition: all 0.15s; text-align: center;
-  }
-  .amt-btn.selected { border-color: var(--gold); color: var(--gold); background: rgba(240,165,0,0.08); }
+  .amount-row { display:flex; gap:5px; margin-bottom:5px; }
+  .amt-btn { flex:1; min-width:50px; padding:7px 2px; border-radius:3px; font-family:'Share Tech Mono',monospace; font-size:11px; border:1px solid var(--border); background:var(--surface); color:var(--muted); cursor:pointer; transition:all 0.15s; text-align:center; }
+  .amt-btn.selected { border-color:var(--gold); color:var(--gold); background:rgba(240,165,0,0.08); }
 
-  .submit-section { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border); }
+  /* Multiplier buttons */
+  .mult-label { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:1px; margin-bottom:4px; }
+  .mult-row { display:flex; gap:5px; }
+  .mult-btn { flex:1; padding:6px 2px; border-radius:3px; font-family:'Share Tech Mono',monospace; font-size:12px; border:1px solid var(--border); background:var(--surface); color:var(--muted); cursor:pointer; transition:all 0.15s; text-align:center; }
+  .mult-btn.selected { border-color:var(--harbour); color:var(--harbour); background:rgba(77,159,255,0.1); }
+  .mult-btn[data-mult="2"].selected { border-color:var(--gold); color:var(--gold); background:rgba(240,165,0,0.1); }
+  .mult-btn[data-mult="3"].selected { border-color:var(--neon-red); color:var(--neon-red); background:rgba(255,45,85,0.1); }
 
-  /* Result */
-  .result-box { text-align: center; padding: 32px 16px; }
-  .result-label { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 2px; margin-bottom: 8px; }
-  .result-pnl { font-family: 'Bebas Neue', sans-serif; font-size: 72px; }
-  .result-pnl.up { color: var(--jade); text-shadow: 0 0 24px rgba(0,200,150,0.4); }
-  .result-pnl.down { color: var(--neon-red); text-shadow: 0 0 24px rgba(255,45,85,0.4); }
-  .result-total { font-family: 'Share Tech Mono', monospace; font-size: 14px; color: var(--text); margin-top: 8px; }
+  .submit-section { margin-top:18px; padding-top:16px; border-top:1px solid var(--border); }
 
-  /* End */
-  .end-box { text-align: center; padding: 40px 20px; }
-  .end-title { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--gold); margin-bottom: 8px; text-shadow: 0 0 24px rgba(240,165,0,0.4); letter-spacing: 4px; }
+  /* Analyst tip */
+  .tip-btn { width:100%; background:transparent; color:var(--gold); border:1px solid rgba(240,165,0,0.4); font-family:'Share Tech Mono',monospace; font-size:12px; letter-spacing:1px; padding:10px; border-radius:4px; cursor:pointer; margin-bottom:10px; transition:all 0.2s; }
+  .tip-btn:hover { background:rgba(240,165,0,0.08); }
+  .tip-box { background:rgba(240,165,0,0.06); border:1px solid rgba(240,165,0,0.3); border-radius:6px; padding:12px 14px; margin-bottom:10px; font-size:13px; line-height:1.6; color:var(--gold); animation:fadeIn 0.4s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
 
-  .tag { display: inline-block; font-family: 'Share Tech Mono', monospace; font-size: 10px; padding: 2px 8px; border-radius: 2px; letter-spacing: 1px; }
-  .tag-live { background: rgba(255,45,85,0.15); color: var(--neon-red); border: 1px solid rgba(255,45,85,0.4); }
+  .result-box { text-align:center; padding:32px 16px; }
+  .result-label { font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:2px; margin-bottom:8px; }
+  .result-pnl { font-family:'Bebas Neue',sans-serif; font-size:72px; }
+  .result-pnl.up { color:var(--jade); text-shadow:0 0 24px rgba(0,200,150,0.4); }
+  .result-pnl.down { color:var(--neon-red); text-shadow:0 0 24px rgba(255,45,85,0.4); }
+  .result-total { font-family:'Share Tech Mono',monospace; font-size:14px; color:var(--text); margin-top:8px; }
 
-  .divider { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
+  .end-box { text-align:center; padding:32px 16px; }
+  .end-title { font-family:'Bebas Neue',sans-serif; font-size:48px; color:var(--gold); margin-bottom:8px; text-shadow:0 0 24px rgba(240,165,0,0.4); letter-spacing:4px; }
+
+  .tag { display:inline-block; font-family:'Share Tech Mono',monospace; font-size:10px; padding:2px 8px; border-radius:2px; letter-spacing:1px; }
+  .tag-live { background:rgba(255,45,85,0.15); color:var(--neon-red); border:1px solid rgba(255,45,85,0.4); }
+  .divider { border:none; border-top:1px solid var(--border); margin:16px 0; }
 </style>
 </head>
 <body>
 
-<!-- JOIN SCREEN -->
 <div class="screen active" id="screenJoin">
   <div class="join-logo">Market <span>Call</span></div>
   <div class="join-hk">香港金融市場</div>
@@ -121,7 +103,6 @@
   <p style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);margin-top:20px;text-align:center;letter-spacing:1px">You'll start with $10,000 to trade across 4 rounds</p>
 </div>
 
-<!-- GAME SCREEN -->
 <div class="screen" id="screenGame">
   <div class="status-top">
     <div>
@@ -144,8 +125,30 @@ let votes = {};
 let currentMarkets = [];
 let timerInterval = null;
 let alreadySubmitted = false;
+let tipPurchased = false;
 
-// ── Rendering helpers ──────────────────────────────────────────────────────
+// ── Sound (mobile) ──────────────────────────────────────────────────────────
+let audioCtx = null;
+function getAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+function playSubmitSound() {
+  try {
+    const ctx = getAudio();
+    [523, 659, 784].forEach((freq, i) => {
+      setTimeout(() => {
+        const osc = ctx.createOscillator(); const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.frequency.value = freq; osc.type = 'sine';
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+        osc.start(); osc.stop(ctx.currentTime + 0.15);
+      }, i * 80);
+    });
+  } catch(e) {}
+}
+
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -166,14 +169,31 @@ socket.on('joined', ({ capital }) => {
   showScreen('screenGame');
 });
 
+socket.on('capitalUpdate', ({ capital }) => {
+  myCapital = capital;
+  document.getElementById('displayCapital').textContent = '$' + capital.toLocaleString();
+});
+
+socket.on('tipRevealed', ({ tip, cost }) => {
+  tipPurchased = true;
+  const existing = document.getElementById('tipBox');
+  if (existing) { existing.textContent = tip; return; }
+  const btn = document.getElementById('tipBtnEl');
+  if (btn) btn.style.display = 'none';
+  const box = document.createElement('div');
+  box.className = 'tip-box'; box.id = 'tipBox'; box.textContent = tip;
+  const submitSection = document.querySelector('.submit-section');
+  if (submitSection) submitSection.insertBefore(box, submitSection.firstChild);
+});
+
+socket.on('tipError', (msg) => {
+  alert(msg);
+});
+
 socket.on('votesReceived', () => {
   const btn = document.getElementById('submitBtn');
-  if (btn) { 
-    btn.textContent = '✓ TRADES SUBMITTED'; 
-    btn.disabled = true; 
-    btn.style.background = '#1e2330'; 
-    btn.style.color = 'var(--green)'; 
-  }
+  if (btn) { btn.textContent = '✓ TRADES SUBMITTED'; btn.disabled = true; btn.style.background = '#1e2330'; btn.style.color = 'var(--jade)'; }
+  playSubmitSound();
 });
 
 socket.on('finalResult', ({ totalCapital, leaderboard }) => {
@@ -207,35 +227,38 @@ function renderPhase(state) {
 
   if (state.phase === 'lobby') {
     el.innerHTML = `<div class="wait-box"><div class="wait-title">WAITING FOR HOST</div><span class="wait-dot"></span><span class="wait-dot"></span><span class="wait-dot"></span></div>`;
+
   } else if (state.phase === 'news' && state.round) {
     currentMarkets = state.round.markets;
     el.innerHTML = `
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
         <span class="tag tag-live">LIVE</span>
-        <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">ROUND ${state.round.id} / 4</span>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">ROUND ${state.round.id} / 4</span>
       </div>
       <div class="round-title">${state.round.title}</div>
-      <p style="font-size:14px;line-height:1.6;color:#b0b8c8;margin-top:12px">${state.round.news}</p>
-      <div style="margin-top:20px;font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)">Host will open voting soon...</div>`;
+      <p style="font-size:14px;line-height:1.6;color:#8fa0c0;margin-top:12px">${state.round.news}</p>
+      <div style="margin-top:20px;font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:1px">Host will open voting soon...</div>`;
+
   } else if (state.phase === 'voting' && state.round) {
     votes = {};
     currentMarkets = state.round.markets;
-    // Reset submitted state
     alreadySubmitted = false;
+    tipPurchased = false;
     renderVoting(state);
+
   } else if (state.phase === 'reveal') {
-    // roundResult event handles individual reveal, show generic waiting if no result yet
     if (!document.querySelector('.result-box')) {
-      el.innerHTML = `<div class="wait-box"><div class="wait-title">PRICES REVEALED</div><p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);margin-top:12px">Watch the main screen for analysis!</p></div>`;
+      el.innerHTML = `<div class="wait-box"><div class="wait-title">PRICES REVEALED</div><p style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);margin-top:12px;letter-spacing:1px">Watch the main screen for analysis!</p></div>`;
     }
+
   } else if (state.phase === 'end') {
     const lb = state.leaderboard;
-    const rank = lb.findIndex(p => p.capital === myCapital) + 1;
+    const rank = lb.findIndex(p => p.capital === myCapital) + 1 || lb.length;
     const diff = myCapital - 10000;
     const sign = diff >= 0 ? '+' : '';
     const col = diff >= 0 ? 'var(--jade)' : 'var(--neon-red)';
-    const medals = ['🥇', '🥈', '🥉'];
-    const medal = rank <= 3 ? medals[rank - 1] : `#${rank}`;
+    const medals = ['🥇','🥈','🥉'];
+    const medal = rank <= 3 ? medals[rank-1] : `#${rank}`;
     el.innerHTML = `
       <div class="end-box">
         <div style="font-size:56px;margin-bottom:8px">${medal}</div>
@@ -243,16 +266,14 @@ function renderPhase(state) {
         <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:2px;margin-bottom:12px">YOUR FINAL PORTFOLIO</div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:52px;color:var(--jade);text-shadow:0 0 20px rgba(0,200,150,0.4)">$${myCapital.toLocaleString()}</div>
         <div style="font-family:'Share Tech Mono',monospace;font-size:14px;color:${col};margin-top:8px">${sign}$${Math.abs(diff).toLocaleString()} vs starting capital</div>
-        <hr style="border:none;border-top:1px solid var(--border);margin:24px 0">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:12px">LEADERBOARD</div>
-        ${lb.slice(0, 5).map((p, i) => {
+        <hr style="border:none;border-top:1px solid var(--border);margin:20px 0">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:10px">LEADERBOARD</div>
+        ${lb.slice(0,5).map((p,i) => {
           const isMe = p.capital === myCapital;
-          const d = p.capital - 10000;
-          const s = d >= 0 ? '+' : '';
-          const c = d >= 0 ? 'var(--jade)' : 'var(--neon-red)';
-          return `<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:4px;margin-bottom:4px;background:${isMe ? 'rgba(0,200,150,0.08)' : 'var(--surface)'};border:1px solid ${isMe ? 'rgba(0,200,150,0.3)' : 'var(--border)'}">
-            <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);width:20px">${i + 1}</span>
-            <span style="flex:1;font-size:13px;color:${isMe ? 'var(--jade)' : 'var(--text)'}">${p.name}${isMe ? ' ◀' : ''}</span>
+          const d = p.capital-10000; const s = d>=0?'+':''; const c = d>=0?'var(--jade)':'var(--neon-red)';
+          return `<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:4px;margin-bottom:4px;background:${isMe?'rgba(0,200,150,0.08)':'var(--surface)'};border:1px solid ${isMe?'rgba(0,200,150,0.3)':'var(--border)'}">
+            <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);width:20px">${i+1}</span>
+            <span style="flex:1;font-size:13px;color:${isMe?'var(--jade)':'var(--text)'}">${p.name}${isMe?' ◀':''}</span>
             <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:${c}">${s}$${Math.abs(d).toLocaleString()}</span>
           </div>`;
         }).join('')}
@@ -263,12 +284,12 @@ function renderPhase(state) {
 function renderVoting(state) {
   const AMOUNTS = [500, 1000, 2000, 5000];
   const el = document.getElementById('gameContent');
-  const bar = Math.round(((state.timerEnd - Date.now()) / 60000) * 100);
+  const bar = Math.max(0, Math.round(((state.timerEnd - Date.now()) / 60000) * 100));
 
   el.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
       <div class="round-title" style="font-size:18px">${state.round.title}</div>
-      <div id="timerText" style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--green)">60</div>
+      <div id="timerText" style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--jade)">60</div>
     </div>
     <div class="timer-bar-wrap"><div class="timer-bar" id="timerBar" style="width:${bar}%"></div></div>
     ${currentMarkets.map(m => `
@@ -282,14 +303,19 @@ function renderVoting(state) {
         <div class="amount-row" id="amts-${m.replace(/[^a-z0-9]/gi,'_')}">
           ${AMOUNTS.map(a => `<div class="amt-btn" onclick="setAmt('${m}',${a},this)">$${a.toLocaleString()}</div>`).join('')}
         </div>
+        <div class="mult-label">CONFIDENCE MULTIPLIER</div>
+        <div class="mult-row" id="mult-${m.replace(/[^a-z0-9]/gi,'_')}">
+          <div class="mult-btn selected" data-mult="1" onclick="setMult('${m}',1,this)">1× Normal</div>
+          <div class="mult-btn" data-mult="2" onclick="setMult('${m}',2,this)">2× Risky</div>
+          <div class="mult-btn" data-mult="3" onclick="setMult('${m}',3,this)">3× YOLO</div>
+        </div>
       </div>`).join('<hr class="divider">')}
     <div class="submit-section">
+      <button class="tip-btn" id="tipBtnEl" onclick="buyTip()">🔍 ANALYST TIP — $500 to unlock</button>
       <button class="btn-full" id="submitBtn" onclick="submitVotes()">SUBMIT TRADES</button>
     </div>`;
 
-  // Init votes with skip
-  currentMarkets.forEach(m => { votes[m] = { direction: 'skip', amount: 0 }; });
-
+  currentMarkets.forEach(m => { votes[m] = { direction: 'skip', amount: 0, multiplier: 1 }; });
   startPlayerTimer(state.timerEnd);
 }
 
@@ -297,7 +323,7 @@ function setDir(market, dir, el) {
   const section = el.closest('.market-section');
   section.querySelectorAll('.dir-btn').forEach(b => b.classList.remove('selected'));
   el.classList.add('selected');
-  if (!votes[market]) votes[market] = {};
+  if (!votes[market]) votes[market] = { direction: 'skip', amount: 0, multiplier: 1 };
   votes[market].direction = dir;
   if (dir === 'skip') votes[market].amount = 0;
 }
@@ -306,8 +332,21 @@ function setAmt(market, amount, el) {
   const key = market.replace(/[^a-z0-9]/gi,'_');
   document.querySelectorAll(`#amts-${key} .amt-btn`).forEach(b => b.classList.remove('selected'));
   el.classList.add('selected');
-  if (!votes[market]) votes[market] = {};
+  if (!votes[market]) votes[market] = { direction: 'skip', amount: 0, multiplier: 1 };
   votes[market].amount = amount;
+}
+
+function setMult(market, mult, el) {
+  const key = market.replace(/[^a-z0-9]/gi,'_');
+  document.querySelectorAll(`#mult-${key} .mult-btn`).forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  if (!votes[market]) votes[market] = { direction: 'skip', amount: 0, multiplier: 1 };
+  votes[market].multiplier = mult;
+}
+
+function buyTip() {
+  if (tipPurchased) return;
+  socket.emit('buyTip');
 }
 
 function submitVotes() {
@@ -332,7 +371,6 @@ function startPlayerTimer(endTime) {
   }, 200);
 }
 
-// Enter to join
 document.getElementById('playerName').addEventListener('keydown', e => { if (e.key === 'Enter') joinGame(); });
 </script>
 </body>
