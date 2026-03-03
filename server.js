@@ -12,39 +12,47 @@ app.use(express.static(path.join(__dirname, 'public')));
 const ROUNDS = [
   {
     id: 1,
-    title: "Round 1: The Fed Speaks",
-    news: "The Federal Reserve has signalled it may pause rate hikes amid mixed inflation data. Manufacturing PMI came in below expectations at 48.2, while the jobs report showed 250,000 new jobs added last month.",
-    markets: ["Bond", "Equity", "Forex (USD)", "Property"],
-    movements: { Bond: +4.2, Equity: +2.8, "Forex (USD)": -1.5, Property: +1.1 },
-    analysis: "Pausing rate hikes → bonds rally (yields fall, prices up). Equities cheer easier money. USD weakens on dovish Fed. Property slightly positive as mortgage rates ease.",
-    tip: "💡 When central banks pause hikes, fixed income tends to benefit first."
+    title: "PRE-SHOCK: Hong Kong Financial Landscape",
+    cardType: "INITIAL HAND",
+    cardIcon: "🃏",
+    news: "BEFORE THE EVENT — Hong Kong markets are in a fragile equilibrium. The Hang Seng Index hovers near 20,800. HKD remains within its 7.75–7.85 peg band. Property prices are stabilising after a prolonged correction. Bond yields are moderate, and capital flows are broadly neutral. Fund managers must now choose their initial portfolio allocation before the first macro shock hits.",
+    markets: ["HK Equities (HSI)", "HK Property", "HK Bonds", "HKD / Forex"],
+    movements: { "HK Equities (HSI)": 0, "HK Property": 0, "HKD / Forex": 0, "HK Bonds": 0 },
+    analysis: "PRE-SHOCK BASELINE: Hang Seng ~20,800 | HK 10Y Bond Yield ~4.1% | HKD at 7.784 (within band) | Property: stabilising but fragile. This is your starting hand. Choose your overweight and underweight positions wisely before the first action card is drawn.",
+    tip: "💡 ANALYST TIP: Property and Bonds tend to move inversely when rates shift. Consider your duration risk before the Fed makes its next move."
   },
   {
     id: 2,
-    title: "Round 2: China Slowdown",
-    news: "China's GDP growth slows to 4.2%, missing the 5% target. Export data drops 8% YoY. Beijing hints at stimulus but no concrete measures announced yet.",
-    markets: ["Bond", "Equity", "Forex (USD)", "Property"],
-    movements: { Bond: +2.1, Equity: -3.5, "Forex (USD)": +2.8, Property: -2.2 },
-    analysis: "Risk-off: investors flee to safe-haven bonds. Equities fall on growth fears. USD strengthens as safe haven. Property weakens on sentiment and tighter credit.",
-    tip: "💡 Growth scares trigger risk-off flows — watch where safe havens are."
+    title: "TRIGGER 1: Iran War — Sell-Offs Sweep HK & Asian Markets",
+    cardType: "ACTION CARD: GEOPOLITICAL SHOCK",
+    cardIcon: "💥",
+    news: "BREAKING — Sell-offs sweep Hong Kong and Asian markets as gold and oil surge on Iran war fears. The Hang Seng Index tumbles as risk-off sentiment grips the region. Safe-haven assets spike: gold rallies sharply, Brent crude jumps on supply disruption fears. Capital flees emerging market equities. The HKD peg comes under pressure as USD safe-haven demand surges. Hong Kong property sentiment deteriorates as global uncertainty spikes. [Source: SCMP, 2025]",
+    markets: ["HK Equities (HSI)", "HK Property", "HK Bonds", "HKD / Forex"],
+    movements: { "HK Equities (HSI)": -4.8, "HK Property": -2.1, "HKD / Forex": -1.6, "HK Bonds": +3.2 },
+    analysis: "RISK-OFF SWEEP: Geopolitical shock triggers capital flight from Asian equities. HSI falls sharply as institutional investors de-risk. HK Bonds rally as safe-haven demand surges (yields fall, prices up). HKD weakens modestly — HKMA may need to intervene to defend the peg. Property sentiment collapses on global uncertainty. Gold and oil are the winners; HK risk assets are the losers. KEY DISCUSSION: Which asset in your portfolio survived the shock? Did your initial hand protect your capital?",
+    tip: "💡 ANALYST TIP: In geopolitical risk-off events, duration (bonds) and safe havens outperform. The HKD peg historically holds, but watch HKMA FX reserves for stress signals."
   },
   {
     id: 3,
-    title: "Round 3: Oil Shock",
-    news: "OPEC+ announces surprise production cuts of 1.5 million barrels/day. Brent crude surges 8% in a single session. Energy CPI expected to spike next month.",
-    markets: ["Bond", "Equity", "Forex (USD)", "Property"],
-    movements: { Bond: -3.8, Equity: -1.2, "Forex (USD)": +1.9, Property: -0.8 },
-    analysis: "Inflation fears → bonds sell off (yields spike). Equities mixed but net negative on cost pressures. USD strengthens on petrodollar flows. Property squeezed by rate expectations.",
-    tip: "💡 Energy price spikes reignite inflation fears — think about what that does to real yields."
+    title: "TRIGGER 2: NPC Policy Disappointment — China Cuts Growth Target",
+    cardType: "FORCE DEAL CARD: POLICY SHOCK",
+    cardIcon: "🟠",
+    news: "BEIJING — China's National People's Congress sets 2026 growth target at 4.5%–5%, down from 'around 5%' — signalling leaders may tolerate slower expansion as the property slump and deflation persist. Morgan Stanley analysts warn it may be too early to turn positive, flagging risks of 'policy disappointment' if the NPC fails to deliver an aggressive rescue plan for the housing market. Home sales have yet to find a solid floor. Authorities are expected to rely on special government bonds and selective budget allocations — targeted support rather than broad expansion. No 'bazooka' stimulus forthcoming. [Source: Business Standard / Morgan Stanley, March 2025]",
+    markets: ["HK Equities (HSI)", "HK Property", "HK Bonds", "HKD / Forex"],
+    movements: { "HK Equities (HSI)": -3.1, "HK Property": -3.8, "HKD / Forex": -0.9, "HK Bonds": +1.4 },
+    analysis: "POLICY DISAPPOINTMENT: A lower growth target reduces pressure for large-scale stimulus. Markets had priced in a 'rescue package' — the absence triggers de-rating. HK Property suffers most: China property linkage + no rescue plan = further downside. HSI falls as H-shares re-price on weaker China growth. HK Bonds benefit modestly as rate cut hopes persist. CNH and HKD weaken marginally. KEY DISCUSSION: Does targeted stimulus solve structural weakness? Is the China slowdown a short-term headwind or a structural shift for HK markets?",
+    tip: "💡 ANALYST TIP: Policy disappointment in China historically weighs on HK property for 2–3 quarters. Watch for HKMA and HKEX policy responses as secondary circuit breakers."
   },
   {
     id: 4,
-    title: "Round 4: Tech Boom",
-    news: "A major AI breakthrough is announced by a leading tech firm. Nasdaq futures up 4% pre-market. Venture capital inflows hit a 3-year high. Consumer confidence index jumps to 112.",
-    markets: ["Bond", "Equity", "Forex (USD)", "Property"],
-    movements: { Bond: -1.5, Equity: +6.2, "Forex (USD)": +0.8, Property: +2.5 },
-    analysis: "Risk-on: equities surge led by tech. Bonds slightly sold as money rotates to equities. USD marginally up on US growth story. Property benefits from improved consumer sentiment.",
-    tip: "💡 Risk-on sentiment drives capital from safety into growth assets."
+    title: "AFTERMATH: Portfolio Verdict — Who Survived the Shocks?",
+    cardType: "FINAL DEAL: PORTFOLIO RESOLUTION",
+    cardIcon: "🏆",
+    news: "AFTERMATH REVIEW — Two macro shocks have hit Hong Kong markets in rapid succession: a geopolitical risk-off event (Iran war) and a China policy disappointment (NPC underwhelm). Markets are now in a post-shock equilibrium. The question for every fund manager: who built the strongest diversified position? Who rotated at the right time? And what does the outlook look like from here — further stress, or a recovery catalyst on the horizon?",
+    markets: ["HK Equities (HSI)", "HK Property", "HK Bonds", "HKD / Forex"],
+    movements: { "HK Equities (HSI)": +2.3, "HK Property": -1.2, "HKD / Forex": +0.8, "HK Bonds": -0.6 },
+    analysis: "OUTLOOK & POSITIONING: Short-term volatility remains elevated — geopolitical risk and China growth uncertainty are not resolved. Medium-term: watch for PBOC easing, HKMA liquidity support, and potential China fiscal surprise. HK Bonds remain the defensive anchor. Property faces structural headwinds (2–3 quarter drag). Equities may find a floor if China delivers targeted tech/consumption stimulus. HKD peg is structurally sound — HKMA has deep FX reserves. TRADE RECOMMENDATION: Overweight bonds + selective HK tech equities. Underweight property until floor is confirmed. Neutral HKD. FUND MANAGER VERDICT: Who preserved capital across both shocks?",
+    tip: "💡 FINAL TIP: The best fund managers don't predict every shock — they build resilient portfolios that survive them. Diversification across all four asset classes was the winning strategy."
   }
 ];
 
@@ -101,6 +109,7 @@ function broadcastState() {
     currentRound: gameState.currentRound,
     round: round ? {
       id: round.id, title: round.title, news: round.news, markets: round.markets,
+      cardType: round.cardType, cardIcon: round.cardIcon,
       analysis: gameState.phase === 'reveal' ? round.analysis : null,
       movements: gameState.phase === 'reveal' ? round.movements : null,
       voteTally: gameState.phase === 'reveal' ? getVoteTally() : null,
@@ -201,4 +210,4 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log(`Market Call running on http://localhost:${PORT}`));
+server.listen(PORT, () => console.log(`HK Monopoly Deal Market running on http://localhost:${PORT}`));
